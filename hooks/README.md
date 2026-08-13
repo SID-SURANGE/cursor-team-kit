@@ -103,19 +103,21 @@ Intercepts `git commit` commands and scans staged migration files (`.sql`, ORM m
 
 | Pattern | Action |
 |---------|--------|
-| `DROP COLUMN` | **Deny** — permanent data loss without a prior deprecation phase |
-| `NOT NULL` without `DEFAULT` | **Deny** — full table lock on large tables |
-| `CREATE INDEX` without `CONCURRENTLY` | **Deny** — table lock during index build (PostgreSQL) |
-| `DROP TABLE` | **Deny** — irreversible without a backup |
-| `TRUNCATE` | **Deny** — destroys all rows, bypasses row-level triggers |
+| `DROP COLUMN` | **Ask** — permanent data loss without a prior deprecation phase |
+| `NOT NULL` without `DEFAULT` | **Ask** — full table lock on large tables |
+| `CREATE INDEX` without `CONCURRENTLY` | **Ask** — table lock during index build (PostgreSQL) |
+| `DROP TABLE` | **Ask** — irreversible without a backup |
+| `TRUNCATE` | **Ask** — destroys all rows, bypasses row-level triggers |
+
+These patterns only matter at production scale (locking, zero-downtime deploys) — the hook asks for confirmation rather than blocking, since a small table or side project may not care.
 
 ### `license-gatekeeper.sh` — `beforeShellExecution`
 
-Intercepts `git commit` commands and checks staged lockfile/manifest changes for packages with restrictive copyleft licenses (GPL-2/3, AGPL-3, LGPL, SSPL, EUPL). Uses `license-checker` (Node), `pip-licenses` (Python), or `cargo-license` (Rust) where available; falls back to diff inspection.
+Intercepts `git commit` commands and checks staged lockfile/manifest changes for packages with restrictive copyleft licenses (GPL-2/3, AGPL-3, LGPL, SSPL, EUPL). Uses `license-checker` (Node), `pip-licenses` (Python), or `cargo-license` (Rust) where available; falls back to diff inspection. **Asks** for confirmation rather than blocking — license compliance only matters for commercially-distributed proprietary software, not every project.
 
 ### `session-context.sh` — `sessionStart`
 
-Reads `~/.cursor/.team-kit-version` and injects a context string listing the active kit version, all rules, available skills, and registered hooks. This ensures the agent knows the kit is loaded even when project `.cursor/` files are not present.
+Reads `~/.cursor/.team-ops-version` and injects a minimal context string with the active kit version and a pointer to Cursor Settings → Rules, Commands for the installed rule/skill list. If `.cursor/session-handoff.md` exists in the repo, its content is appended too (capped at 100 lines to avoid unbounded context growth).
 
 ---
 

@@ -38,6 +38,18 @@ EOF
 )"
 ```
 
+```powershell
+# PowerShell (no heredoc support — use a here-string instead):
+$body = @'
+## Summary
+- bullet
+
+## Test plan
+- [ ] step
+'@
+gh pr create --title "your title" --body $body
+```
+
 Return the PR URL when done.
 
 ## Do not

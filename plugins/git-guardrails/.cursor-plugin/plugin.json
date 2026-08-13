@@ -1,8 +1,8 @@
 {
   "name": "git-guardrails",
   "displayName": "Git Guardrails",
-  "version": "1.5.0",
-  "description": "Blocking beforeShellExecution hooks that hard-stop dangerous git pushes, destructive database migrations, and copyleft-licensed dependencies before they run — enforcement that advisory rules can't provide.",
+  "version": "1.6.0",
+  "description": "beforeShellExecution hooks that hard-stop dangerous git pushes and destructive filesystem commands, and ask for confirmation on risky database migrations or copyleft-licensed dependencies — enforcement that advisory rules can't provide.",
   "author": {
     "name": "SID-SURANGE"
   },

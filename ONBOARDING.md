@@ -28,10 +28,10 @@ Restart or reload Cursor after install.
 
 **Verify (machine — filesystem, not Settings UI):**
 
-- [ ] `~/.cursor/rules/` contains five `.mdc` files (`core-development`, `git-safety`, etc.)
+- [ ] `~/.cursor/rules/` contains eight `.mdc` files (`core-development`, `git-safety`, etc.)
 - [ ] `~/.cursor/skills/` contains skill directories, each with `SKILL.md` (`ls ~/.cursor/skills/ | wc -l` shows the count)
 - [ ] `~/.cursor/hooks.json` exists
-- [ ] `cat ~/.cursor/.team-kit-version` shows the kit version (e.g. `1.1.0`)
+- [ ] `cat ~/.cursor/.team-ops-version` shows the kit version (e.g. `1.6.0`)
 
 These paths are **not** listed in **Settings → Rules, Commands** — that is normal.
 

@@ -6,15 +6,15 @@
     "email": "ssurange.dev@gmail.com"
   },
   "metadata": {
-    "description": "Enforcement & release-hygiene plugins for Cursor agents — blocking guardrail hooks and shipping discipline that advisory rules can't enforce.",
-    "version": "1.5.0",
+    "description": "Enforcement & release-hygiene plugins for Cursor agents — guardrail hooks and shipping discipline that advisory rules can't enforce.",
+    "version": "1.6.0",
     "pluginRoot": "plugins"
   },
   "plugins": [
     {
       "name": "git-guardrails",
       "source": "git-guardrails",
-      "description": "Blocking beforeShellExecution hooks that hard-stop dangerous git pushes, destructive database migrations, and copyleft-licensed dependencies before they run."
+      "description": "beforeShellExecution hooks that hard-stop dangerous git pushes and destructive filesystem commands, and ask for confirmation on risky database migrations or copyleft-licensed dependencies."
     }
   ]
 }

@@ -1,5 +1,10 @@
 # install.ps1 — installs cursor-team-ops into $HOME\.cursor\ on Windows
-# Usage: .\install.ps1
+# Usage: .\install.ps1 [-InstallProfile minimal|standard|full] [-Rules a.mdc,b.mdc] [-Skills a,b]
+# (named -InstallProfile, not -Profile, to avoid clashing with PowerShell's automatic $PROFILE variable)
+#   minimal  — always-on rules only (agent-behavior, core-development, security-basics), no skills
+#   standard — all rules, all skills (default; matches pre-profile behavior)
+#   full     — same as standard
+#   -Rules / -Skills — explicit allowlist, overrides the profile's list
 # Re-run after git pull to update.
 #
 # Symlinks are preferred (requires Developer Mode on Windows 10+ or admin rights).
@@ -9,14 +14,41 @@
 #       They only work with WSL or Git Bash. If you are on native PowerShell
 #       without WSL, rules and skills will be active but hooks will not fire.
 
+param(
+    [ValidateSet("minimal", "standard", "full")]
+    [string]$InstallProfile = "standard",
+    [string[]]$Rules = @(),
+    [string[]]$Skills = @()
+)
+
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
 $KitDir   = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $CursorDir = Join-Path $HOME ".cursor"
 
+$MinimalRules = @("agent-behavior.mdc", "core-development.mdc", "security-basics.mdc")
+
+function Test-RuleAllowed {
+    param([string]$Name)
+    if ($Rules.Count -gt 0) { return $Rules -contains $Name }
+    switch ($InstallProfile) {
+        "minimal" { return $MinimalRules -contains $Name }
+        default   { return $true }
+    }
+}
+
+function Test-SkillAllowed {
+    param([string]$Name)
+    if ($Skills.Count -gt 0) { return $Skills -contains $Name }
+    switch ($InstallProfile) {
+        "minimal" { return $false }
+        default   { return $true }
+    }
+}
+
 $version = (Get-Content (Join-Path $KitDir "VERSION") -Raw).Trim()
-Write-Host "Installing Cursor team kit v$version from $KitDir"
+Write-Host "Installing Cursor team kit v$version from $KitDir (profile: $InstallProfile)"
 Write-Host ""
 
 # ── Helper: try symlink, fall back to copy ────────────────────────────────────
@@ -63,18 +95,28 @@ $null = New-Item -ItemType Directory -Force -Path (Join-Path $CursorDir "skills"
 $null = New-Item -ItemType Directory -Force -Path (Join-Path $CursorDir "hooks")
 
 # ── Rules ─────────────────────────────────────────────────────────────────────
+$rulesTargetDir = Join-Path $CursorDir "rules"
 Get-ChildItem (Join-Path $KitDir "rules") -Filter "*.mdc" | ForEach-Object {
-    $target = Join-Path $CursorDir "rules" $_.Name
-    Install-Item -Source $_.FullName -Target $target -Label "rule"
+    if (Test-RuleAllowed -Name $_.Name) {
+        $target = Join-Path $rulesTargetDir $_.Name
+        Install-Item -Source $_.FullName -Target $target -Label "rule"
+    } else {
+        Write-Host "  [rule] $($_.Name) (skipped, profile: $InstallProfile)"
+    }
 }
 
 # ── Skills (core + community, both installed flat into $HOME\.cursor\skills\) ─
+$skillsTargetDir = Join-Path $CursorDir "skills"
 foreach ($tier in @("core", "community")) {
     $tierPath = Join-Path $KitDir "skills\$tier"
     if (Test-Path $tierPath) {
         Get-ChildItem $tierPath -Directory | ForEach-Object {
-            $target = Join-Path $CursorDir "skills" $_.Name
-            Install-Item -Source $_.FullName -Target $target -Label "skill/$tier" -IsDir $true
+            if (Test-SkillAllowed -Name $_.Name) {
+                $target = Join-Path $skillsTargetDir $_.Name
+                Install-Item -Source $_.FullName -Target $target -Label "skill/$tier" -IsDir $true
+            } else {
+                Write-Host "  [skill/$tier] $($_.Name) (skipped, profile: $InstallProfile)"
+            }
         }
     }
 }
@@ -96,8 +138,9 @@ if (Test-Path $hooksJsonDst) {
 Install-Item -Source $hooksJsonSrc -Target $hooksJsonDst -Label "hooks"
 
 # ── Hook scripts (bash — only useful under WSL / Git Bash) ────────────────────
+$hooksTargetDir = Join-Path $CursorDir "hooks"
 Get-ChildItem (Join-Path $KitDir "hooks") -Filter "*.sh" | ForEach-Object {
-    $target = Join-Path $CursorDir "hooks" $_.Name
+    $target = Join-Path $hooksTargetDir $_.Name
     Install-Item -Source $_.FullName -Target $target -Label "hook"
 }
 
@@ -105,7 +148,9 @@ Get-ChildItem (Join-Path $KitDir "hooks") -Filter "*.sh" | ForEach-Object {
 Copy-Item (Join-Path $KitDir "VERSION") (Join-Path $CursorDir ".team-ops-version") -Force
 
 Write-Host ""
-Write-Host "Done. Team kit v$version installed to $HOME\.cursor\"
+Write-Host "Done. Team kit v$version installed to $HOME\.cursor\ (profile: $InstallProfile)"
+Write-Host "Other profiles: .\install.ps1 -InstallProfile minimal | full"
+Write-Host "Or pick exactly what you want: -Rules core-development.mdc,git-safety.mdc -Skills commit-message"
 Write-Host "Next: in each repo, run bootstrap-project.sh and sync-project.ps1 so rules/skills"
 Write-Host "      appear in Cursor Settings. Then reload Cursor."
 Write-Host ""

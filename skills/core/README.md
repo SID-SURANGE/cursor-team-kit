@@ -2,7 +2,7 @@
 
 # 🧠 Core Skills
 
-[![skills](https://img.shields.io/badge/skills-15%20curated-6366f1?style=flat-square)](#skill-reference)
+[![skills](https://img.shields.io/badge/skills-16%20curated-6366f1?style=flat-square)](#skill-reference)
 [![tier](https://img.shields.io/badge/tier-core%20%28maintainer%20reviewed%29-a855f7?style=flat-square)](#skill-reference)
 
 Curated, maintainer-reviewed skills — tested on real projects, kept minimal.
@@ -26,13 +26,21 @@ disable-model-invocation: true  # optional — pure procedural skills only
 
 The agent matches the `description` field against the current task context. When it fires, it reads the full `SKILL.md` and follows the steps inside.
 
-`disable-model-invocation: true` marks a skill as a pure checklist — the agent executes it directly without spawning a sub-model. Set this on procedural skills (commit checks, PR creation). Omit it on open-ended reasoning skills (debugging, test writing).
+`disable-model-invocation: true` marks a skill as explicit-invoke only — its description is never auto-scanned for relevance, so it costs nothing in the background and only runs when the user (or agent) names it directly. Set this on procedural skills (commit checks, PR creation) and on skills that are large but rarely needed (`release-readiness`, `env-drift-check`). Omit it on open-ended reasoning skills that should surface on their own (debugging, test writing).
 
 Skills are installed flat — both `core/` and `community/` land in `~/.cursor/skills/` and `<repo>/.cursor/skills/`.
 
 ---
 
 ## Skill reference
+
+### 🧭 `onboarding`
+
+**Say:** *"I'm new"* / *"just joined"* / *"orient me"* / *"onboard me"*
+
+**Use when:** You just cloned the repo and need first-day orientation. The skill maps the repo structure, explains which rules/skills are active, and walks through a first-task checklist so you're productive without reading every file yourself.
+
+---
 
 ### 🔍 `pre-commit-check`
 
@@ -146,6 +154,8 @@ Skills are installed flat — both `core/` and `community/` land in `~/.cursor/s
 
 **Use when:** You're about to ship — whether that's tagging a release or merging a feature branch to main. The skill first detects which workflow your project uses: if it finds git tags and a version file, it runs a full 8-gate release check (version bumped, CHANGELOG entry, no debug code, feature flags, migration notes, deployment docs, clean tree, up to date). If the project deploys continuously from main with no formal versioning, it runs a lighter 4-gate pre-merge check covering the gates that matter regardless of workflow. The verdict is BLOCK or READY, with specific remediation for each failure.
 
+Explicit-invoke only (`disable-model-invocation: true`) — say the trigger phrase to run it; it doesn't auto-fire.
+
 ---
 
 ### 🌊 `env-drift-check`
@@ -153,6 +163,8 @@ Skills are installed flat — both `core/` and `community/` land in `~/.cursor/s
 **Say:** *"env drift"* / *"check my environment"* / *"why does it work locally but not in CI"*
 
 **Use when:** Something works locally but breaks in CI or staging, and you suspect an environment mismatch. The skill checks four axes independently: (1) keys referenced in code but missing from `.env.example` (undocumented variables that break new developer setup), (2) runtime version mismatches between `.nvmrc`, the CI matrix, and the Docker base image, (3) required env vars that have no corresponding CI secret or `env:` block, and (4) whether the Dockerfile uses `npm ci` or `poetry install` with the lockfile (vs. `npm install` which silently ignores it). Only the Docker lockfile issue is blocking; everything else is advisory with one-line fixes.
+
+Explicit-invoke only (`disable-model-invocation: true`) — say the trigger phrase to run it; it doesn't auto-fire.
 
 ---
 

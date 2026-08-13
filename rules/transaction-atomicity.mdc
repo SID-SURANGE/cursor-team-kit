@@ -26,25 +26,14 @@ ORM equivalents:
 ```typescript
 // Prisma
 await prisma.$transaction([writeA, writeB])
-
-// Sequelize
-await sequelize.transaction(async (t) => { ... })
-
-// TypeORM
-await manager.transaction(async (em) => { ... })
 ```
-
 ```python
 # SQLAlchemy
 with db.begin():
     db.execute(write_a)
     db.execute(write_b)
-
-# Django ORM
-with transaction.atomic():
-    model_a.save()
-    model_b.save()
 ```
+Other ORMs (Sequelize, TypeORM, Django) follow the same shape: an explicit transaction/context-manager wrapping all writes, with automatic rollback on exception.
 
 ## When to flag
 Flag the code and stop if you see:

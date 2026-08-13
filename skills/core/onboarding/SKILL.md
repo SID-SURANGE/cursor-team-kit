@@ -13,8 +13,8 @@ Run these in parallel:
 ```bash
 git log --oneline -10          # recent work — what's been happening
 git branch -a                  # branches in flight
-ls -la                         # root layout
-cat README.md 2>/dev/null || echo "No README found"
+ls -la                         # root layout (PowerShell: Get-ChildItem -Force)
+cat README.md 2>/dev/null || echo "No README found"   # PowerShell: if (Test-Path README.md) { Get-Content README.md } else { "No README found" }
 ```
 
 Then read:

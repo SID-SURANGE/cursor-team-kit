@@ -1,6 +1,7 @@
 ---
 name: requirements-synthesis
 description: Ingest multiple client-provided documents (PDF, DOCX, XLSX, HTML, images, text, code) and synthesize them into a single structured REQUIREMENTS-DRAFT.md. Triggered by "synthesize these requirements", "read these client docs", "requirements synthesis", "combine these documents", "intake these files", "create requirements from these files".
+disable-model-invocation: true
 ---
 
 # 📥 Skill: requirements-synthesis
@@ -47,7 +48,7 @@ readable text. Without it the skill will stop at the prerequisite check step.
 **Install once:**
 
 ```bash
-pip install markitdown[all]
+pip install "markitdown[all]"
 ```
 
 Verify:
@@ -72,12 +73,16 @@ Run:
 python -c "import markitdown; print('markitdown ok')" 2>/dev/null || echo "NOT_INSTALLED"
 ```
 
+(use `python3` if `python` is not found)
+
+PowerShell equivalent: `python -c "import markitdown; print('markitdown ok')" 2>$null; if (-not $?) { Write-Output 'NOT_INSTALLED' }`
+
 If output is `NOT_INSTALLED`, stop and tell the user:
 
 ```
 markitdown is required for this skill. Install it with:
 
-  pip install markitdown[all]
+  pip install "markitdown[all]"
 
 Then re-trigger the skill.
 ```

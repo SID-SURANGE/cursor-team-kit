@@ -38,6 +38,11 @@ alwaysApply: true
 - When multiple independent pieces of information are needed, batch tool calls in a single response.
 - Do not wait for sequential results when calls are independent.
 
+## Environment safety
+- Never execute a script or command that can modify global/user-level state (`$HOME`, `~/.cursor`, system config, global package installs, `git config --global`) as a way to "test" it. Redirect the test to an isolated scratch directory, or run a disposable copy of the script with the target path hardcoded to a scratch location — never the real path.
+- Do not assume an environment variable set in one shell/process propagates to a separately-spawned interpreter (e.g. exporting `$HOME` in bash before shelling out to `powershell.exe`, or vice versa). Verify propagation explicitly before relying on it, or avoid the assumption by hardcoding a scratch path in a throwaway copy of the script instead.
+- If a test run turns out to have touched real user/global state unexpectedly, stop, disclose exactly what changed, and get confirmation before continuing — do not silently proceed as though it didn't happen.
+
 ## Hallucination prevention
 - Never invent a function signature, method name, CLI flag, or config key. If you are not certain it exists in the installed version, say so and tell the user where to verify.
 - When using a third-party package or API method for the first time in a session, state the source of truth (docs URL, `npm info <pkg>`, `pip show <pkg>`, official changelog). Do not rely on training data for version-specific details.

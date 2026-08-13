@@ -73,5 +73,16 @@ EOF
 )"
 ```
 
+```powershell
+# PowerShell (no heredoc support — use a here-string instead):
+$msg = @'
+feat: add user authentication
+
+Replaces the previous session-token approach with JWT.
+Closes #42
+'@
+git commit -m $msg
+```
+
 ## After commit
 Run `git status` to confirm success before reporting done.

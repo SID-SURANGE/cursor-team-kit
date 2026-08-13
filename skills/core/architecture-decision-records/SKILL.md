@@ -26,7 +26,7 @@ Capture significant architectural or design decisions in a lightweight, durable 
 
 ### 2. Assign a number
 ```bash
-ls docs/adr/ | sort | tail -1
+ls docs/adr/ | sort | tail -1    # PowerShell: Get-ChildItem docs/adr/ | Sort-Object | Select-Object -Last 1
 ```
 Next ADR number = last number + 1. Zero-pad to 4 digits: `0001`, `0002`, etc.
 

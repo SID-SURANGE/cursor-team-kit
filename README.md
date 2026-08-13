@@ -82,14 +82,14 @@ Restart Cursor after installing.
 │   ├── transaction-atomicity.mdc   │   ├── transaction-atomicity.mdc
 │   ├── architectural-drift.mdc     │   ├── architectural-drift.mdc
 │   └── telemetry-standards.mdc     │   └── project-context.mdc    ← yours to edit
-├── skills/  (20 skills)            ├── skills/  (20 skills)
+├── skills/  (21 skills)            ├── skills/  (21 skills)
 ├── hooks/                          ├── commands/
 │   ├── git-guard.sh                │   ├── pr.md
 │   ├── db-migration-guard.sh       │   ├── review.md
 │   ├── license-gatekeeper.sh       │   ├── fix-issue.md
 │   └── session-context.sh          │   └── handoff.md
 ├── hooks.json                      └── hooks.json  (optional)
-└── .team-kit-version
+└── .team-ops-version
       ↑ install.sh                        ↑ sync-project.sh
 ```
 
@@ -121,12 +121,34 @@ cd $HOME\cursor-team-ops
 
 > Restart Cursor after install.
 
+**Choosing what gets installed.** By default (`standard` profile) `install.sh` /
+`install.ps1` install everything — every rule and every skill. If you only want the
+always-on safety/style rules and no skills, or want to hand-pick exactly what loads,
+pass a profile or an explicit allowlist:
+
+```bash
+bash install.sh --profile=minimal      # 3 always-on rules only, no skills
+bash install.sh --profile=full         # everything (same as default "standard")
+bash install.sh --rules=core-development.mdc,git-safety.mdc --skills=commit-message
+```
+
+```powershell
+.\install.ps1 -InstallProfile minimal
+.\install.ps1 -Rules core-development.mdc,git-safety.mdc -Skills commit-message
+```
+
+Fewer installed rules/skills means less always-scanned context on every Cursor
+session — pick `minimal` if you mainly want the git-safety and security guardrails
+without the full skill library. `sync-project.sh` (step 2 below) accepts the same
+`--profile=` / `--rules=` / `--skills=` flags.
+
 ### 2 — Set up a repo (per project)
 
 ```bash
 cd /path/to/your/repo
 bash ~/cursor-team-ops/bootstrap-project.sh   # scaffolds AGENTS.md + commands
 bash ~/cursor-team-ops/sync-project.sh         # copies rules + skills into .cursor/
+# bash ~/cursor-team-ops/sync-project.sh --profile=minimal   # or pick a smaller profile
 ```
 
 ```powershell

@@ -2,12 +2,39 @@
 
 # 📋 Changelog
 
-[![Version](https://img.shields.io/badge/latest-1.5.0-6366f1?style=flat-square)](https://github.com/SID-SURANGE/cursor-team-ops/releases)
+[![Version](https://img.shields.io/badge/latest-1.6.0-6366f1?style=flat-square)](https://github.com/SID-SURANGE/cursor-team-ops/releases)
 
 All notable changes to cursor-team-ops are documented here.
 Versions follow [Semantic Versioning](https://semver.org/).
 
 </div>
+
+---
+
+## 1.6.0 — 2026-08-13
+
+### Added
+
+- `install.sh` / `install.ps1` / `sync-project.sh` — `--profile=minimal|standard|full` flag (plus `--rules=`/`--skills=` explicit allowlists), so teams can opt out of installing every rule and skill by default instead of always getting the full bundle
+- `rules/agent-behavior.mdc` — "Environment safety" section: never test scripts against real `$HOME`/`~/.cursor`/global config, verify env-var propagation across spawned shells explicitly
+- PowerShell equivalents alongside every bash/POSIX command example across `rules/git-safety.mdc` and 11 `SKILL.md` files (`env-drift-check`, `release-readiness`, `commit-history-audit`, `onboarding`, `architecture-decision-records`, `pre-commit-check`, `pr-summary`, `sync-docs-after-edit`, `write-changelog`, `requirements-synthesis`) — a no-assumptions audit found these assumed a POSIX/bash shell and would fail outright on native Windows PowerShell 5.1
+
+### Changed
+
+- `rules/git-safety.mdc` — dropped `alwaysApply: true` (was paying its token cost on every session regardless of relevance); branch naming now detects and matches the repo's existing convention instead of imposing a fixed pattern
+- `rules/telemetry-standards.mdc` — softened from "must"/"reject" to advisory, and now skips entirely when the project has no structured logger already configured, instead of nagging on plain `console.log`/`print` (the norm for most projects)
+- `rules/transaction-atomicity.mdc` — trimmed redundant duplicate-language code samples
+- `skills/core/release-readiness`, `skills/core/env-drift-check`, `skills/community/ci-cd-pipeline`, `skills/community/requirements-synthesis` — marked `disable-model-invocation: true` (largest + rarest-used skills; now explicit-invoke only instead of auto-scanned every session)
+- `hooks/session-context.sh` — no longer injects a hardcoded inventory of every installed skill/rule into every session; `session-handoff.md` inclusion capped at 100 lines instead of unbounded
+- `hooks/db-migration-guard.sh`, `hooks/license-gatekeeper.sh` — downgraded from `deny` to `ask`; their concerns (production-scale locking, commercial license compliance) don't apply to every repo, so the developer confirms instead of being hard-blocked
+- `plugins/git-guardrails/` — hook/rule copies re-synced with the changes above; README and manifest descriptions updated to reflect the ask-vs-deny split instead of describing all three hooks as hard blocks
+
+### Fixed
+
+- `install.ps1` — a 3-argument `Join-Path` call is unsupported on Windows PowerShell 5.1 (only PS 6+); rule/skill/hook installation was silently broken on native Windows PowerShell until this fix
+- `skills/community/requirements-synthesis` — unquoted `pip install markitdown[all]` breaks under macOS's default zsh shell (glob expansion); now quoted
+- Corrected `.team-kit-version` → `.team-ops-version` references in `CLAUDE.md`, `ONBOARDING.md`, `README.md`, and the bug-report issue template — the actual filename `install.sh`/`session-context.sh` use, which didn't match the docs
+- `hooks/README.md`, `rules/README.md`, `skills/core/README.md`, `skills/community/README.md` — corrected stale rule/skill counts and behavior descriptions (deny→ask, `alwaysApply` status, missing `onboarding` skill entry) to match current code
 
 ---
 
