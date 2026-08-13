@@ -1,6 +1,7 @@
 ---
 name: workflow-from-chats
 description: Scan the recent conversation for a repeated prompt pattern and produce a ready-to-commit SKILL.md. Triggered by "make this a skill", "extract this workflow", "save this as a skill".
+disable-model-invocation: true
 ---
 
 # ⚡ Skill: workflow-from-chats

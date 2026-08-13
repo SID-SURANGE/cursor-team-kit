@@ -1,6 +1,7 @@
 ---
 name: pr-review-canvas
 description: Group PR changes by purpose, flag risky sections, and produce a reviewer map so the reader doesn't parse raw diff. Triggered by "review canvas", "map this PR", "help me review this PR", "understand this PR", "what does this PR change", "walk me through this PR", "review this diff", "what should I focus on in this PR", "pr-review-canvas".
+disable-model-invocation: true
 ---
 
 # 🗺️ Skill: pr-review-canvas

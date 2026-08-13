@@ -1,6 +1,7 @@
 ---
 name: commit-history-audit
 description: Audit a branch's full commit history for commit hygiene — WIP commits, squash candidates, merge commit policy violations, subject length, and optional convention compliance — before opening a PR. Triggered by "audit my commits", "check commit history before PR", "are my commits clean", "commit-history-audit".
+disable-model-invocation: true
 ---
 
 # Skill: commit-history-audit
