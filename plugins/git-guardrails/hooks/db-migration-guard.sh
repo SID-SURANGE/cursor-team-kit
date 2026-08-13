@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-# db-migration-guard.sh — blocks commits containing destructive migration patterns
+# db-migration-guard.sh — warns on commits containing risky migration patterns
+# These patterns are only actually dangerous at production scale (locking, zero-downtime
+# deploys); on a small table or side project they're often fine, so this asks rather than
+# blocks — the developer, not the hook, decides whether the risk applies to them.
 # Event: beforeShellExecution (pre-commit check on staged migration files)
 # Installed to: ~/.cursor/hooks/db-migration-guard.sh
 
@@ -76,8 +79,8 @@ for file in $staged_migrations; do
 done
 
 if [ -n "$violations" ]; then
-  msg="Database migration guard blocked this commit. Destructive patterns detected: ${violations}Review zero-downtime migration guidelines before proceeding."
-  printf '{"permission":"deny","user_message":"%s","agent_message":"%s"}\n' \
+  msg="Database migration guard found risky patterns: ${violations}These matter most at production scale (locking, zero-downtime deploys) — confirm this is intentional for your table size and deployment context."
+  printf '{"permission":"ask","user_message":"%s","agent_message":"%s"}\n' \
     "$(echo "$msg" | sed 's/"/\\"/g')" \
     "$(echo "$msg" | sed 's/"/\\"/g')"
   exit 0

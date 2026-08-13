@@ -82,14 +82,14 @@ Restart Cursor after installing.
 │   ├── transaction-atomicity.mdc   │   ├── transaction-atomicity.mdc
 │   ├── architectural-drift.mdc     │   ├── architectural-drift.mdc
 │   └── telemetry-standards.mdc     │   └── project-context.mdc    ← yours to edit
-├── skills/  (20 skills)            ├── skills/  (20 skills)
+├── skills/  (21 skills)            ├── skills/  (21 skills)
 ├── hooks/                          ├── commands/
 │   ├── git-guard.sh                │   ├── pr.md
 │   ├── db-migration-guard.sh       │   ├── review.md
 │   ├── license-gatekeeper.sh       │   ├── fix-issue.md
 │   └── session-context.sh          │   └── handoff.md
 ├── hooks.json                      └── hooks.json  (optional)
-└── .team-kit-version
+└── .team-ops-version
       ↑ install.sh                        ↑ sync-project.sh
 ```
 

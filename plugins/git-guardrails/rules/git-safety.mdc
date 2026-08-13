@@ -1,6 +1,5 @@
 ---
-description: Git safety guardrails — no destructive commands, commit only when asked, safe message format
-alwaysApply: true
+description: Git safety guardrails — no destructive commands, commit only when asked, safe message format. Apply when the user asks to run a git command, commit, push, or resolve merge/branch issues.
 ---
 
 # Git Safety
@@ -12,9 +11,10 @@ alwaysApply: true
 
 ## Branch naming
 - Never push directly to `main` or `master`. Always work on a feature branch.
-- Branch names must follow the pattern: `<type>/<short-description>` where type is one of `feature`, `fix`, `chore`, `docs`, `refactor`, `test`.
-- Examples: `feature/user-auth`, `fix/login-timeout`, `chore/update-deps`.
-- If the user is on `main`/`master` and asks to start work, suggest creating a branch first: `git checkout -b feature/<description>`.
+- Before naming a new branch, check the repo's existing convention: `git branch -a` (or `git for-each-ref --format='%(refname:short)' refs/heads/` for a cleaner list) and look at the last 10-20 branch names to infer the pattern. This works identically in bash, zsh, and PowerShell — no piping into `head`/`grep`/`sort` required. Match whatever pattern is already in use — ticket-ID prefixes (`PROJ-123-desc`), username prefixes (`alice/desc`), or a `<type>/<description>` scheme are all valid if that's what the repo already does.
+- Only fall back to the default `<type>/<short-description>` pattern (`feature`, `fix`, `chore`, `docs`, `refactor`, `test`) when the repo has no discernible existing convention (e.g. first branch in the repo, or branch names are inconsistent with no clear pattern).
+- Examples of the default pattern: `feature/user-auth`, `fix/login-timeout`, `chore/update-deps`.
+- If the user is on `main`/`master` and asks to start work, suggest creating a branch first, matching the detected (or default) convention.
 
 ## Amending commits
 - Avoid `git commit --amend`. Only amend HEAD when ALL of these are true:
@@ -31,7 +31,7 @@ alwaysApply: true
 - Never update git config.
 
 ## Commit message format
-Always use a HEREDOC to avoid quoting issues:
+In bash/zsh/Git Bash, use a HEREDOC to avoid quoting issues:
 
 ```bash
 git commit -m "$(cat <<'EOF'
@@ -42,12 +42,24 @@ EOF
 )"
 ```
 
+In native Windows PowerShell (no heredoc support), build the message with a here-string instead:
+
+```powershell
+$msg = @'
+Imperative summary in present tense.
+
+Optional body explaining why.
+'@
+git commit -m $msg
+```
+
 ## Defensive checkpoints
 - Before starting a complex multi-file refactor or a long agent session, suggest creating a checkpoint:
   ```bash
   git add -A && git stash push -m "pre-<task> checkpoint"
   # or commit on a clean branch if work is already staged
   ```
+  PowerShell 5.1 has no `&&` — run the two commands on separate lines, or use `git add -A; if ($?) { git stash push -m "pre-<task> checkpoint" }`.
 - This gives a safe rollback point without disrupting the branch history.
 - Never create the checkpoint automatically — suggest it and wait for user confirmation.
 

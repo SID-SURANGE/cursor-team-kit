@@ -20,7 +20,7 @@ Not yet in core, but tested on real projects.
 | `spec-driven-development` | *"write a spec"* / *"spec this out"* | None |
 | `security-hardening` | *"security review"* / *"harden this"* | None |
 | `ci-cd-pipeline` | *"set up CI"* / *"add GitHub Actions"* | None |
-| `requirements-synthesis` | *"synthesize these requirements"* / *"read these client docs"* | `pip install markitdown[all]` |
+| `requirements-synthesis` | *"synthesize these requirements"* / *"read these client docs"* | `pip install "markitdown[all]"` |
 
 ---
 
