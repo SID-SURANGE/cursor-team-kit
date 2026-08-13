@@ -23,6 +23,8 @@ Most developer teams do not cut formal releases — they merge to main and deplo
 
 ## Steps
 
+If your environment supports spawning a sub-agent (a background/isolated agent that returns only its final output to the main conversation), delegate steps 1-4 to it — running up to 8 gates means multiple diff/grep passes over changed files, which can be sizable and add no value in the main thread once the report is written. If no sub-agent capability is available, run steps 1-4 inline as normal.
+
 ### 1. Detect the workflow mode
 
 Run these in parallel:
