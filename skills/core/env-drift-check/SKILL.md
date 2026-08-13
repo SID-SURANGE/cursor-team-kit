@@ -31,24 +31,24 @@ Run these in parallel to map the environment landscape before checking for drift
 
 ```bash
 # Variable declarations
-ls .env.example .env.sample .env.template .env.defaults 2>/dev/null
+ls .env.example .env.sample .env.template .env.defaults 2>/dev/null    # PowerShell: Get-ChildItem .env.example,.env.sample,.env.template,.env.defaults -ErrorAction SilentlyContinue
 
 # Lockfiles and runtime manifests
-ls package-lock.json yarn.lock pnpm-lock.yaml poetry.lock Pipfile.lock Gemfile.lock Cargo.lock go.sum 2>/dev/null
+ls package-lock.json yarn.lock pnpm-lock.yaml poetry.lock Pipfile.lock Gemfile.lock Cargo.lock go.sum 2>/dev/null    # PowerShell: Get-ChildItem package-lock.json,yarn.lock,pnpm-lock.yaml,poetry.lock,Pipfile.lock,Gemfile.lock,Cargo.lock,go.sum -ErrorAction SilentlyContinue
 
 # Runtime version declarations
-cat .nvmrc 2>/dev/null
-cat .node-version 2>/dev/null
-cat .python-version 2>/dev/null
-cat .ruby-version 2>/dev/null
-cat .tool-versions 2>/dev/null    # asdf
-cat .mise.toml 2>/dev/null        # mise
+cat .nvmrc 2>/dev/null    # PowerShell: Get-Content .nvmrc -ErrorAction SilentlyContinue
+cat .node-version 2>/dev/null    # PowerShell: Get-Content .node-version -ErrorAction SilentlyContinue
+cat .python-version 2>/dev/null    # PowerShell: Get-Content .python-version -ErrorAction SilentlyContinue
+cat .ruby-version 2>/dev/null    # PowerShell: Get-Content .ruby-version -ErrorAction SilentlyContinue
+cat .tool-versions 2>/dev/null    # asdf — PowerShell: Get-Content .tool-versions -ErrorAction SilentlyContinue
+cat .mise.toml 2>/dev/null        # mise — PowerShell: Get-Content .mise.toml -ErrorAction SilentlyContinue
 
 # CI configuration
-ls .github/workflows/*.yml .github/workflows/*.yaml .gitlab-ci.yml .circleci/config.yml .buildkite/pipeline.yml bitbucket-pipelines.yml 2>/dev/null
+ls .github/workflows/*.yml .github/workflows/*.yaml .gitlab-ci.yml .circleci/config.yml .buildkite/pipeline.yml bitbucket-pipelines.yml 2>/dev/null    # PowerShell: Get-ChildItem .github/workflows/*.yml,.github/workflows/*.yaml,.gitlab-ci.yml,.circleci/config.yml,.buildkite/pipeline.yml,bitbucket-pipelines.yml -ErrorAction SilentlyContinue
 
 # Container
-ls Dockerfile docker-compose.yml docker-compose.yaml compose.yml 2>/dev/null
+ls Dockerfile docker-compose.yml docker-compose.yaml compose.yml 2>/dev/null    # PowerShell: Get-ChildItem Dockerfile,docker-compose.yml,docker-compose.yaml,compose.yml -ErrorAction SilentlyContinue
 ```
 
 If none of these exist, say: "No environment artefacts found. This project may not have formalised environment configuration yet — consider adding a `.env.example` and pinning your runtime version."
@@ -63,6 +63,12 @@ If none of these exist, say: "No environment artefacts found. This project may n
 grep -v "^\s*#" .env.example | grep -v "^\s*$" | cut -d= -f1 | sort
 ```
 
+PowerShell equivalent:
+
+```powershell
+Get-Content .env.example | Where-Object { $_ -notmatch '^\s*#' -and $_.Trim() -ne '' } | ForEach-Object { ($_ -split '=')[0] } | Sort-Object
+```
+
 #### 2b. Extract keys referenced in application code
 
 ```bash
@@ -74,6 +80,24 @@ grep -rE "os\.environ(\[|\.get)\[?['\"]([A-Z_]+)" --include="*.py" . 2>/dev/null
 
 # Go
 grep -rE 'os\.Getenv\("[A-Z_]+"\)' --include="*.go" . 2>/dev/null | grep -oE '"[A-Z_]+"' | tr -d '"' | sort -u
+```
+
+PowerShell equivalent (Node/JS/TS):
+
+```powershell
+Get-ChildItem src,app,lib -Recurse -Include *.js,*.ts,*.mjs -ErrorAction SilentlyContinue | Select-String -Pattern 'process\.env\.([A-Z_]+)' | ForEach-Object { $_.Matches.Groups[1].Value } | Sort-Object -Unique
+```
+
+PowerShell equivalent (Python):
+
+```powershell
+Get-ChildItem -Recurse -Include *.py -ErrorAction SilentlyContinue | Select-String -Pattern "os\.environ(\[|\.get)\[?['\"]([A-Z_]+)" | ForEach-Object { $_.Matches.Groups[2].Value } | Sort-Object -Unique
+```
+
+PowerShell equivalent (Go):
+
+```powershell
+Get-ChildItem -Recurse -Include *.go -ErrorAction SilentlyContinue | Select-String -Pattern 'os\.Getenv\("([A-Z_]+)"\)' | ForEach-Object { $_.Matches.Groups[1].Value } | Sort-Object -Unique
 ```
 
 #### 2c. Cross-reference
@@ -103,10 +127,10 @@ Sources, in priority order:
 
 ```bash
 # Node — check the lockfile format version (implies minimum Node version)
-head -5 package-lock.json 2>/dev/null    # "lockfileVersion": 3 → Node ≥18
+head -5 package-lock.json 2>/dev/null    # "lockfileVersion": 3 → Node ≥18    # PowerShell: Get-Content package-lock.json -TotalCount 5
 
 # Python — check requires-python from poetry.lock or Pipfile.lock
-grep "python_requires\|python-requires\|requires_python" poetry.lock Pipfile.lock 2>/dev/null | head -5
+grep "python_requires\|python-requires\|requires_python" poetry.lock Pipfile.lock 2>/dev/null | head -5    # PowerShell: Select-String -Path poetry.lock,Pipfile.lock -Pattern 'python_requires|python-requires|requires_python' -ErrorAction SilentlyContinue | Select-Object -First 5
 ```
 
 #### 3c. Read the CI matrix runtime
@@ -115,10 +139,16 @@ grep "python_requires\|python-requires\|requires_python" poetry.lock Pipfile.loc
 cat .github/workflows/*.yml 2>/dev/null | grep -E "node-version|python-version|ruby-version|java-version" | head -20
 ```
 
+PowerShell equivalent:
+
+```powershell
+Get-ChildItem .github/workflows -Filter *.yml -ErrorAction SilentlyContinue | Get-Content | Select-String -Pattern 'node-version|python-version|ruby-version|java-version' | Select-Object -First 20
+```
+
 #### 3d. Read the Docker base image runtime
 
 ```bash
-grep "^FROM" Dockerfile 2>/dev/null
+grep "^FROM" Dockerfile 2>/dev/null    # PowerShell: Select-String -Path Dockerfile -Pattern '^FROM' -ErrorAction SilentlyContinue
 ```
 
 Map the image tag to a runtime version:
@@ -150,6 +180,12 @@ For each CI workflow file found, extract env vars passed to the job:
 grep -E "^\s+(env:|[A-Z_]+:)" .github/workflows/*.yml 2>/dev/null | grep -v "^\s*#"
 ```
 
+PowerShell equivalent:
+
+```powershell
+Get-ChildItem .github/workflows -Filter *.yml -ErrorAction SilentlyContinue | Get-Content | Where-Object { $_ -match '^\s+(env:|[A-Z_]+:)' -and $_ -notmatch '^\s*#' }
+```
+
 Cross-reference against `.env.example` keys:
 
 - Keys in `.env.example` marked as required (no default value set, i.e. `KEY=` with empty value) but absent from any CI `env:` block or secrets reference → **CI GAP**: these jobs may fail silently if the key is needed at runtime
@@ -164,6 +200,12 @@ If a `Dockerfile` exists and a lockfile exists:
 ```bash
 # Does the Dockerfile copy the lockfile and use it?
 grep -E "COPY.*lock|npm ci|pip install --require-hashes|poetry install --no-root" Dockerfile 2>/dev/null
+```
+
+PowerShell equivalent:
+
+```powershell
+Select-String -Path Dockerfile -Pattern 'COPY.*lock|npm ci|pip install --require-hashes|poetry install --no-root' -ErrorAction SilentlyContinue
 ```
 
 - `npm install` (not `npm ci`) in Dockerfile → **DRIFT RISK**: ignores lockfile, installs latest matching semver

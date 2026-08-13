@@ -77,7 +77,7 @@ Rules:
 ### 4. Read the existing CHANGELOG.md
 
 ```bash
-head -40 CHANGELOG.md
+head -40 CHANGELOG.md    # PowerShell: Get-Content CHANGELOG.md -TotalCount 40
 ```
 
 Confirm the existing format and insert the new entry **at the top**, below the `# Changelog` heading and above the previous release.

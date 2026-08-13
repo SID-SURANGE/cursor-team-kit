@@ -27,8 +27,10 @@ Convention detection is self-calibrating: the skill reads the repo's own commit 
 ```bash
 # Identify the base branch (try common names in order)
 git remote show origin 2>/dev/null | grep "HEAD branch" | awk '{print $NF}'
+# PowerShell equivalent: (git remote show origin 2>$null | Select-String 'HEAD branch').ToString().Split()[-1]
 # Fallback: check for main, master, develop
 git branch -r | grep -E "origin/(main|master|develop)" | head -1
+# PowerShell equivalent: (git branch -r | Select-String 'origin/(main|master|develop)' | Select-Object -First 1)
 ```
 
 ```bash
@@ -41,9 +43,7 @@ If the branch has no divergence (is at HEAD of base), say so and stop — nothin
 ### 2. Collect full commit data
 
 ```bash
-git log main..HEAD \
-  --pretty=format:"%H|%s|%an|%ae|%ai|%P" \
-  --no-merges
+git log main..HEAD --pretty=format:"%H|%s|%an|%ae|%ai|%P" --no-merges
 ```
 
 Also collect any merge commits separately:
@@ -58,6 +58,7 @@ Before checking anything, read the base branch history to understand what this r
 
 ```bash
 git log origin/main -50 --pretty=format:"%s" 2>/dev/null | head -50
+# PowerShell equivalent: git log origin/main -50 --pretty=format:"%s" 2>$null | Select-Object -First 50
 ```
 
 Classify the repo into one of three modes:

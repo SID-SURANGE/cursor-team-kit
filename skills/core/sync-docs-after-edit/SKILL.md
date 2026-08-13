@@ -33,13 +33,24 @@ Collect the full set of changed source files. Exclude `.md` files themselves fro
 
 ### 2. Discover all documentation files
 ```bash
-# Find all markdown files, excluding node_modules, .git, vendor, etc.
-find . -name "*.md" \
-  -not -path "*/.git/*" \
-  -not -path "*/node_modules/*" \
-  -not -path "*/vendor/*" \
-  -not -path "*/.venv/*"
+# List tracked markdown files — cross-platform by construction (git ships
+# identically on macOS/Linux/Windows), and naturally excludes .git/node_modules/
+# vendor/.venv as long as they're gitignored, with no -not -path gymnastics needed.
+git ls-files '*.md'
+
+# If newly-added (untracked) docs should also be in scope, add:
+git ls-files --others --exclude-standard '*.md'
 ```
+This only covers files git knows about (tracked, plus untracked if you add the
+second command) — which is the correct scope for a "sync docs" pass, since a
+doc that isn't even staged for commit isn't part of "what you just changed."
+
+If you're truly outside a git repo, use the PowerShell-native equivalent instead:
+```powershell
+Get-ChildItem -Recurse -Filter *.md | Where-Object { $_.FullName -notmatch '\\(\.git|node_modules|vendor|\.venv)\\' }
+```
+(GNU `find -not -path` has no native Windows equivalent — the `find.exe` bundled
+with `cmd.exe` is a completely different, incompatible tool.)
 
 ### 3. For each .md file, assess relevance
 

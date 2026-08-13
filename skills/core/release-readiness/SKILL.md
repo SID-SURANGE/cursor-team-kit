@@ -29,17 +29,18 @@ Run these in parallel:
 
 ```bash
 # Does the repo use formal versioning?
-cat VERSION 2>/dev/null
-cat package.json 2>/dev/null | grep '"version"'
-cat pyproject.toml 2>/dev/null | grep '^version'
-cat Cargo.toml 2>/dev/null | grep '^version'
+cat VERSION 2>/dev/null    # PowerShell: Get-Content VERSION -ErrorAction SilentlyContinue
+cat package.json 2>/dev/null | grep '"version"'    # PowerShell: (Get-Content package.json -ErrorAction SilentlyContinue) -match '"version"'
+cat pyproject.toml 2>/dev/null | grep '^version'    # PowerShell: (Get-Content pyproject.toml -ErrorAction SilentlyContinue) -match '^version'
+cat Cargo.toml 2>/dev/null | grep '^version'    # PowerShell: (Get-Content Cargo.toml -ErrorAction SilentlyContinue) -match '^version'
 
 # Does the repo use git tags?
 git describe --tags --abbrev=0 2>/dev/null || echo "(no tags)"
-git tag --list | tail -5
+# PowerShell: $tag = git describe --tags --abbrev=0 2>$null; if (-not $tag) { $tag = "(no tags)" }
+git tag --list | tail -5    # PowerShell: | Select-Object -Last 5
 
 # CHANGELOG location
-ls CHANGELOG.md CHANGELOG HISTORY.md RELEASES.md 2>/dev/null
+ls CHANGELOG.md CHANGELOG HISTORY.md RELEASES.md 2>/dev/null    # PowerShell: Get-ChildItem CHANGELOG.md,CHANGELOG,HISTORY.md,RELEASES.md -ErrorAction SilentlyContinue
 ```
 
 **Classify the repo into one of two modes:**
@@ -95,9 +96,13 @@ Use the last tag as the diff base in formal release mode; use the base branch (`
 ```bash
 # Formal release mode
 git diff $(git describe --tags --abbrev=0 2>/dev/null)..HEAD -- '*.js' '*.ts' '*.py' '*.go' '*.rb' '*.java' | grep -E "^\+" | grep -iE "console\.log|print\(|debugger|breakpoint\(\)|pdb\.set_trace|binding\.pry|TODO.*release|FIXME.*release|DO NOT MERGE|fmt\.Println"
+# PowerShell equivalent (also note $(git describe --tags --abbrev=0 2>$null) for the embedded 2>/dev/null):
+# git diff $(git describe --tags --abbrev=0 2>$null)..HEAD -- '*.js' '*.ts' '*.py' '*.go' '*.rb' '*.java' | Select-String -Pattern '^\+' | Select-String -Pattern 'console\.log|print\(|debugger|breakpoint\(\)|pdb\.set_trace|binding\.pry|TODO.*release|FIXME.*release|DO NOT MERGE|fmt\.Println'
 
 # CD mode
 git diff main..HEAD -- '*.js' '*.ts' '*.py' '*.go' '*.rb' '*.java' | grep -E "^\+" | grep -iE "console\.log|print\(|debugger|breakpoint\(\)|pdb\.set_trace|binding\.pry|DO NOT MERGE|fmt\.Println"
+# PowerShell equivalent:
+# git diff main..HEAD -- '*.js' '*.ts' '*.py' '*.go' '*.rb' '*.java' | Select-String -Pattern '^\+' | Select-String -Pattern 'console\.log|print\(|debugger|breakpoint\(\)|pdb\.set_trace|binding\.pry|DO NOT MERGE|fmt\.Println'
 ```
 
 - **PASS**: no matches.
@@ -109,6 +114,8 @@ Detect feature flag patterns in the diff since last tag:
 
 ```bash
 git diff $(git describe --tags --abbrev=0 2>/dev/null)..HEAD | grep -iE "feature_flag|featureFlag|isEnabled|launch_darkly|unleash|flipper|FEATURE_" | grep "^\+"
+# PowerShell equivalent:
+# git diff $(git describe --tags --abbrev=0 2>$null)..HEAD | Select-String -Pattern 'feature_flag|featureFlag|isEnabled|launch_darkly|unleash|flipper|FEATURE_' | Select-String -Pattern '^\+'
 ```
 
 - **PASS**: no new feature flag references added in this release, or all flags added in this diff are documented in the CHANGELOG as intentional.
@@ -123,10 +130,16 @@ Check whether the diff includes database migrations, API breaking changes, or co
 # Formal release mode (diff from last tag)
 git diff $(git describe --tags --abbrev=0 2>/dev/null)..HEAD --name-only | grep -iE "migration|migrate|schema|alembic|flyway|liquibase"
 git log $(git describe --tags --abbrev=0 2>/dev/null)..HEAD --pretty=format:"%s %b" | grep -i "BREAKING CHANGE"
+# PowerShell equivalent (also note $(git describe --tags --abbrev=0 2>$null) for the embedded 2>/dev/null):
+# git diff $(git describe --tags --abbrev=0 2>$null)..HEAD --name-only | Select-String -Pattern 'migration|migrate|schema|alembic|flyway|liquibase'
+# git log $(git describe --tags --abbrev=0 2>$null)..HEAD --pretty=format:"%s %b" | Select-String -Pattern 'BREAKING CHANGE'
 
 # CD mode (diff from base branch)
 git diff main..HEAD --name-only | grep -iE "migration|migrate|schema|alembic|flyway|liquibase"
 git log main..HEAD --pretty=format:"%s %b" | grep -i "BREAKING CHANGE"
+# PowerShell equivalent:
+# git diff main..HEAD --name-only | Select-String -Pattern 'migration|migrate|schema|alembic|flyway|liquibase'
+# git log main..HEAD --pretty=format:"%s %b" | Select-String -Pattern 'BREAKING CHANGE'
 ```
 
 - **PASS**: no migrations or breaking changes detected.
@@ -139,6 +152,7 @@ Check for a deployment or operations doc:
 
 ```bash
 ls docs/deployment* docs/deploy* docs/ops* DEPLOY.md OPERATIONS.md runbook* 2>/dev/null
+# PowerShell: Get-ChildItem docs/deployment*,docs/deploy*,docs/ops*,DEPLOY.md,OPERATIONS.md,runbook* -ErrorAction SilentlyContinue
 ```
 
 - If a deployment doc exists: check whether it was modified in this release cycle (since last tag). If the diff includes infra/config/env changes but the deployment doc was NOT touched, flag it.
@@ -160,6 +174,7 @@ git status --short
 ```bash
 git fetch origin --dry-run 2>&1
 git rev-list HEAD..origin/main --count 2>/dev/null   # replace 'main' with detected base branch
+# PowerShell: 2>$null
 ```
 
 - **PASS**: branch is at or ahead of the remote base — nothing to pull.
