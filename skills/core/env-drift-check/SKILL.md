@@ -25,6 +25,8 @@ This is distinct from environment *setup* (use `ci-cd-pipeline` for that). This 
 
 ## Steps
 
+If your environment supports spawning a sub-agent (a background/isolated agent that returns only its final output to the main conversation), delegate steps 1-6 to it. This phase runs ~15 discovery/grep commands and can produce a lot of intermediate output that has no value once the report is written — only the finished report from step 6 needs to land in the main thread. If no sub-agent capability is available, run steps 1-6 inline as normal.
+
 ### 1. Discover what exists
 
 Run these in parallel to map the environment landscape before checking for drift:

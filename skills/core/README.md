@@ -80,6 +80,8 @@ Skills are installed flat — both `core/` and `community/` land in `~/.cursor/s
 
 **Use when:** You're reviewing someone else's PR (or your own large one) and the diff is hard to parse. Instead of reading the raw diff top-to-bottom, this skill groups changes by purpose — new features, bug fixes, refactors, config changes — flags the riskiest sections, and produces a reviewer map so you know where to focus your attention first.
 
+Explicit-invoke only (`disable-model-invocation: true`) — say the trigger phrase to run it; it doesn't auto-fire.
+
 ---
 
 ### 📋 `requirements-qa`
@@ -144,7 +146,9 @@ Skills are installed flat — both `core/` and `community/` land in `~/.cursor/s
 
 **Say:** *"audit my commits"* / *"check commit history before PR"* / *"are my commits clean"*
 
-**Use when:** Your branch has several commits and you want to catch hygiene problems before a reviewer does — WIP markers, messages in the wrong tense, commits that should be squashed, or subjects that are too long. The skill reads the last 50 commits on the base branch first to detect what convention the repo actually uses (Conventional Commits, ticket-prefixed, or free-form), then audits only against that. It never imposes a standard the project hasn't already adopted. Each failing commit gets a specific suggested rewrite and the rebase command to fix it.
+**Use when:** Your branch has several commits and you want to catch hygiene problems before a reviewer does — WIP markers, messages in the wrong tense, commits that should be squashed, or subjects that are too long. The skill reads the last 50 commits on the base branch first to detect what convention the repo actually uses (Conventional Commits, ticket-prefixed, or free-form), then audits only against that. It never imposes a standard the project hasn't already adopted. Each failing commit gets a specific suggested rewrite and the rebase command to fix it. Most useful in repos that don't squash-merge — if PRs are squash-merged, per-commit hygiene on the branch is moot.
+
+Explicit-invoke only (`disable-model-invocation: true`) — say the trigger phrase to run it; it doesn't auto-fire.
 
 ---
 

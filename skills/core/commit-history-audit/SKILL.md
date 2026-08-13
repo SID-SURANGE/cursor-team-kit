@@ -1,6 +1,7 @@
 ---
 name: commit-history-audit
 description: Audit a branch's full commit history for commit hygiene — WIP commits, squash candidates, merge commit policy violations, subject length, and optional convention compliance — before opening a PR. Triggered by "audit my commits", "check commit history before PR", "are my commits clean", "commit-history-audit".
+disable-model-invocation: true
 ---
 
 # Skill: commit-history-audit
@@ -21,6 +22,8 @@ Convention detection is self-calibrating: the skill reads the repo's own commit 
 - "check my git history"
 
 ## Steps
+
+If your environment supports spawning a sub-agent (a background/isolated agent that returns only its final output to the main conversation), delegate steps 1-5 to it — the full commit history pull and per-commit analysis can be long on active branches, and only the finished report from step 5 needs to land in the main thread. If no sub-agent capability is available, run steps 1-5 inline as normal.
 
 ### 1. Determine the base branch and divergence point
 
