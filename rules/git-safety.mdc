@@ -1,6 +1,5 @@
 ---
-description: Git safety guardrails — no destructive commands, commit only when asked, safe message format
-alwaysApply: true
+description: Git safety guardrails — no destructive commands, commit only when asked, safe message format. Apply when the user asks to run a git command, commit, push, or resolve merge/branch issues.
 ---
 
 # Git Safety
@@ -12,9 +11,10 @@ alwaysApply: true
 
 ## Branch naming
 - Never push directly to `main` or `master`. Always work on a feature branch.
-- Branch names must follow the pattern: `<type>/<short-description>` where type is one of `feature`, `fix`, `chore`, `docs`, `refactor`, `test`.
-- Examples: `feature/user-auth`, `fix/login-timeout`, `chore/update-deps`.
-- If the user is on `main`/`master` and asks to start work, suggest creating a branch first: `git checkout -b feature/<description>`.
+- Before naming a new branch, check the repo's existing convention: `git branch -a | head -20` or `git log --all --format='%D' | grep -oE '[a-zA-Z0-9_.-]+/[a-zA-Z0-9_.-]+' | sort -u | head -20`. Match whatever pattern is already in use — ticket-ID prefixes (`PROJ-123-desc`), username prefixes (`alice/desc`), or a `<type>/<description>` scheme are all valid if that's what the repo already does.
+- Only fall back to the default `<type>/<short-description>` pattern (`feature`, `fix`, `chore`, `docs`, `refactor`, `test`) when the repo has no discernible existing convention (e.g. first branch in the repo, or branch names are inconsistent with no clear pattern).
+- Examples of the default pattern: `feature/user-auth`, `fix/login-timeout`, `chore/update-deps`.
+- If the user is on `main`/`master` and asks to start work, suggest creating a branch first, matching the detected (or default) convention.
 
 ## Amending commits
 - Avoid `git commit --amend`. Only amend HEAD when ALL of these are true:

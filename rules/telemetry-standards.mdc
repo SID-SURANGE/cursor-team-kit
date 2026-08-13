@@ -1,15 +1,18 @@
 ---
-description: Telemetry standards — enforce structured logging with mandatory metadata fields; reject plain string log calls
+description: Telemetry standards — suggest structured logging with metadata fields when the project already uses a structured logger
 globs: "**/*.ts,**/*.tsx,**/*.js,**/*.jsx,**/*.py,**/*.go,**/*.java,**/*.rb,**/*.cs"
 alwaysApply: false
 ---
 
 # Telemetry Standards
 
-## The rule
-All logging calls must pass a **structured object** containing the mandatory metadata fields. Plain string log calls are not allowed in production code paths.
+## Before applying this rule
+Structured logging (requestId/traceId correlation, queryable metadata fields) is standard practice at organizations with a log aggregator (Datadog, Splunk, CloudWatch) — it is not how most projects log. Check first whether the project already uses a structured logger (`pino`, `winston`, `structlog`, `zap`, or similar — check the manifest file and existing log call shapes). **If no structured logger is configured, do not apply this rule at all** — plain `console.log`/`print` is the norm for that project and flagging it is just noise.
 
-Unstructured logs like `logger.error("something went wrong")` or `console.log(data)` are unqueryable in Datadog, Splunk, CloudWatch, or any structured log aggregator — they make incident debugging significantly harder.
+## The rule (only once a structured logger is confirmed present)
+Prefer a **structured object** containing the mandatory metadata fields over a plain string log call.
+
+Unstructured logs like `logger.error("something went wrong")` or `console.log(data)` are unqueryable in Datadog, Splunk, CloudWatch, or any structured log aggregator — they make incident debugging significantly harder in a project that has already invested in one.
 
 ## Mandatory metadata fields
 At minimum, every log call must include:
@@ -28,7 +31,6 @@ Additional fields by event type:
 
 ## Correct pattern
 ```typescript
-// TypeScript / Node
 logger.error({
   requestId: ctx.requestId,
   userId: ctx.userId,
@@ -36,32 +38,20 @@ logger.error({
   error: { message: err.message, code: err.code },
 })
 ```
+Same shape in any language: a structured object/dict with `requestId`, `level`, `message`, and context fields — never a bare string.
 
-```python
-# Python
-logger.error({
-    "request_id": ctx.request_id,
-    "user_id": ctx.user_id,
-    "message": "Payment authorisation failed",
-    "error": str(e),
-})
-```
+## What to suggest (structured logger present, request-handling code)
 
-## What to flag
-
-Flag and stop if you see:
-- `console.log(...)`, `console.error(...)`, `console.warn(...)` with a plain string or non-structured value in non-test code
-- `logger.info("string")` / `logger.error("string")` — plain strings without a structured object
-- `print(...)` used for operational logging (as opposed to CLI output or debug scripts)
-- Any log call missing `requestId` / `traceId` in a request-handling context
+Gently suggest, don't block, when you see:
+- `logger.info("string")` / `logger.error("string")` — plain strings passed to an already-configured structured logger, in request-handling or production code paths
+- A log call missing `requestId` / `traceId` when nearby calls in the same file already include it (i.e. the project has a convention this call broke)
 
 ## What not to flag
 - Test files (`*.test.*`, `*.spec.*`, `*_test.*`, `tests/`)
 - CLI tools or scripts where structured logging is inappropriate
 - Debug-only code clearly marked with a feature flag or env guard
+- `console.log` used for local debugging that the developer clearly intends to remove or that isn't in a request/production path
+- Any project without an already-configured structured logger (see "Before applying this rule" above) — do not suggest adding one unprompted
 
 ## Do not silently refactor
-Flag non-compliant calls and explain what fields are missing. Do not rewrite logging calls without asking — the developer needs to supply the correct context values (requestId, userId, etc.) from their execution context.
-
-## If no logger is configured
-If the project has no structured logger, flag the plain log call and suggest adding one (e.g. `pino`, `winston`, `structlog`, `zap`). Do not add the dependency without asking.
+Suggest non-compliant calls and explain what fields are missing. Do not rewrite logging calls without asking — the developer needs to supply the correct context values (requestId, userId, etc.) from their execution context.

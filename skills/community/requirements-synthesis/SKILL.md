@@ -1,6 +1,7 @@
 ---
 name: requirements-synthesis
 description: Ingest multiple client-provided documents (PDF, DOCX, XLSX, HTML, images, text, code) and synthesize them into a single structured REQUIREMENTS-DRAFT.md. Triggered by "synthesize these requirements", "read these client docs", "requirements synthesis", "combine these documents", "intake these files", "create requirements from these files".
+disable-model-invocation: true
 ---
 
 # 📥 Skill: requirements-synthesis

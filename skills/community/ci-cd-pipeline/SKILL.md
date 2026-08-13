@@ -1,6 +1,7 @@
 ---
 name: ci-cd-pipeline
 description: Set up or fix a CI/CD pipeline with quality gates — lint, type check, tests, build, security audit, and deployment. Triggered by "set up CI", "fix the pipeline", "add GitHub Actions", "ci-cd-pipeline", "automate deployment", "set up quality gates".
+disable-model-invocation: true
 attribution: >
   Independently written. CI/CD quality gate patterns and GitHub Actions configuration
   are publicly documented practices. The gate ordering, feedback loop structure, and

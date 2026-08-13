@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-# license-gatekeeper.sh — blocks commits adding packages with restrictive copyleft licenses
+# license-gatekeeper.sh — warns on commits adding packages with restrictive copyleft licenses
+# License compliance only matters if the project is commercially distributed as proprietary
+# software; solo/internal/OSS projects often don't care, so this asks rather than blocks.
 # Event: beforeShellExecution (pre-commit check on staged lockfiles)
 # Installed to: ~/.cursor/hooks/license-gatekeeper.sh
 
@@ -109,8 +111,8 @@ for pkg in data:
 fi
 
 if [ -n "$violations" ]; then
-  msg="License gatekeeper blocked this commit. ${violations}Packages with GPL, AGPL, LGPL, SSPL, or EUPL licenses may obligate you to open-source proprietary code. Confirm with your legal team before adding these dependencies."
-  printf '{"permission":"deny","user_message":"%s","agent_message":"%s"}\n' \
+  msg="License gatekeeper found: ${violations}Packages with GPL, AGPL, LGPL, SSPL, or EUPL licenses may obligate you to open-source proprietary code — this only matters if you're distributing commercially. Confirm this is fine for your project (or check with legal) before proceeding."
+  printf '{"permission":"ask","user_message":"%s","agent_message":"%s"}\n' \
     "$(echo "$msg" | sed 's/"/\\"/g')" \
     "$(echo "$msg" | sed 's/"/\\"/g')"
   exit 0

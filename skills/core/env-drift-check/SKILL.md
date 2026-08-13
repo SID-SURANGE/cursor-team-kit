@@ -1,6 +1,7 @@
 ---
 name: env-drift-check
 description: Detect environment drift — mismatches between .env.example, CI environment matrix, Docker base images, and the lockfile runtime — so "works on my machine" failures are caught before they hit staging or production. Triggered by "env drift", "check my environment", "why does it work locally but not in CI", "env-drift-check", "environment mismatch".
+disable-model-invocation: true
 ---
 
 # Skill: env-drift-check

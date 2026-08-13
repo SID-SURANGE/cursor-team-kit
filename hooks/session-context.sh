@@ -6,30 +6,26 @@
 
 VERSION_FILE="$HOME/.cursor/.team-ops-version"
 HANDOFF_FILE=".cursor/session-handoff.md"
-
-SKILLS="pre-commit-check, commit-message, pr-summary, pr-review-canvas, minimal-diff-review, \
-deslop, document-this, sync-docs-after-edit, write-changelog, handoff, onboarding, \
-architecture-decision-records, requirements-qa, workflow-from-chats, \
-commit-history-audit, env-drift-check, release-readiness, \
-spec-driven-development, security-hardening, ci-cd-pipeline, requirements-synthesis"
-
-RULES="Always-on: core-development, git-safety, agent-behavior, security-basics, documentation. \
-Conditional: transaction-atomicity (multi-step DB writes), architectural-drift (import boundaries), \
-telemetry-standards (structured logging)."
+HANDOFF_MAX_LINES=100
 
 if [ -f "$VERSION_FILE" ]; then
   VERSION=$(tr -d '[:space:]' < "$VERSION_FILE")
-  BASE_CONTEXT="Cursor team kit v${VERSION} is active. ${RULES} Skills available: ${SKILLS}. \
-Hooks: git-guard (direct/force-push to main, hard-reset), session-context (this hook). \
-Run install.sh (or install.ps1 on Windows) to update the kit."
+  BASE_CONTEXT="Cursor team kit v${VERSION} is active. Installed rules/skills/hooks are visible under Cursor Settings → Rules, Commands."
 else
-  BASE_CONTEXT="Cursor team kit is active (version file not found — run install.sh to register the version). \
-${RULES} Skills available: ${SKILLS}."
+  BASE_CONTEXT="Cursor team kit is active (version file not found — run install.sh to register the version)."
 fi
 
-# Inject last-session handoff if it exists in the current working directory
+# Inject last-session handoff if it exists in the current working directory, capped to avoid unbounded context growth
 if [ -f "$HANDOFF_FILE" ]; then
-  HANDOFF=$(cat "$HANDOFF_FILE")
+  HANDOFF_TOTAL_LINES=$(wc -l < "$HANDOFF_FILE")
+  if [ "$HANDOFF_TOTAL_LINES" -gt "$HANDOFF_MAX_LINES" ]; then
+    HANDOFF=$(head -n "$HANDOFF_MAX_LINES" "$HANDOFF_FILE")
+    HANDOFF="${HANDOFF}
+
+[...truncated: showing first ${HANDOFF_MAX_LINES} of ${HANDOFF_TOTAL_LINES} lines. Read ${HANDOFF_FILE} directly for the rest.]"
+  else
+    HANDOFF=$(cat "$HANDOFF_FILE")
+  fi
   CONTEXT="${BASE_CONTEXT}
 
 --- LAST SESSION HANDOFF ---

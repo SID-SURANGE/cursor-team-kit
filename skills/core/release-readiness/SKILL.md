@@ -1,6 +1,7 @@
 ---
 name: release-readiness
 description: Walk a structured pre-merge or pre-release gate depending on the repo's workflow — detects whether the project uses formal releases (tags, versioning) or continuous deployment from main, then runs the appropriate checklist. Triggered by "am I ready to release", "pre-release check", "release readiness", "release-readiness", "can I ship this", "is this ready to merge".
+disable-model-invocation: true
 ---
 
 # Skill: release-readiness
