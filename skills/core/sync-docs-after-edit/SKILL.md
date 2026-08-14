@@ -102,3 +102,8 @@ A per-file verdict table, plus optional edits if the user confirms.
 - If `CHANGELOG.md` exists, always flag it as a candidate — new changes often warrant a changelog entry.
 - If `README.md` has a "Quick start" or "API" section, always read it against the changed source.
 - Do not update `CHANGELOG.md` automatically — propose the entry and let the user confirm.
+
+## Gotchas
+- `git diff --name-only HEAD~1..HEAD` errors on a repo's very first commit (no `HEAD~1` exists) — check `git rev-list --count HEAD` first, or fall back to `git show --name-only HEAD`.
+- On a repo with hundreds of `.md` files, reading every one in full to assess relevance can blow the context budget — filter to docs that plausibly reference the changed paths/symbols (grep first) before doing a full read.
+- A doc can look "up to date" on a text match while actually describing removed behavior if the removal wasn't a rename (e.g. a feature deleted outright, not renamed) — cross-check against the diff's deletions, not just its additions.

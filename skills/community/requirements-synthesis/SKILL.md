@@ -268,3 +268,8 @@ Tell the user:
 requirements-synthesis  →  requirements-qa  →  spec-driven-development
  (this skill)               (quality check)      (implementation spec)
 ```
+
+## Gotchas
+- markitdown performs text extraction, not OCR — a scanned or image-only PDF converts to empty or near-empty output rather than failing loudly. Check the converted text length against the file's page/size before treating it as processed; a suspiciously short result should be reported as a likely OCR gap, not silently included as "no requirements found here."
+- Spreadsheet conversion flattens formulas to their last-computed value, not the formula itself — a constraint expressed as a formula (a capacity limit, a pricing tier) may read as an opaque number with no context. Flag cells that look like derived values without an obvious source.
+- Treating everything markitdown outputs as equally authoritative can bury a throwaway comment in a doc's margin at the same weight as its main requirement — track source location (page/section), not just source file, so downstream conflict resolution can weigh statements appropriately.

@@ -157,3 +157,8 @@ Recommendation: <fix HIGH findings before merging / safe to merge with noted cav
 - Never add a dependency to fix a security issue without verifying the dependency itself is not a bigger risk.
 - If a security fix requires a design change (e.g. the entire auth model is wrong), surface it as a separate task — do not silently work around it.
 - Do not remove or disable security linting rules to make CI pass.
+
+## Gotchas
+- If `npm audit` / `pip-audit` isn't installed or can't run (offline, no lockfile), report that check as **SKIP** with the reason — never silently drop it from the report as if it passed.
+- Applying the OWASP checklist to test fixtures, seed data, or sample/demo code as if it were production surfaces false HIGH findings (hardcoded test credentials are often intentional) — confirm the scope is actually production-reachable code before flagging.
+- A parameterized query still isn't safe if the table or column name itself is built from user input — parameter binding only protects values, not identifiers; check for string-built identifiers separately under A03.

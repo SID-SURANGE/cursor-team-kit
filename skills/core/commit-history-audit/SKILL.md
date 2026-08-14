@@ -196,3 +196,8 @@ Do not run `git rebase` automatically — that is a destructive operation requir
 - Commits by bots (email contains `[bot]` or `noreply`) are excluded from the audit.
 - This skill audits; it does not rewrite. All git history changes require explicit user action.
 - Works alongside `pre-commit-check` (which audits staged changes before a single commit) and `pr-summary` (which creates the PR after history is clean).
+
+## Gotchas
+- `git remote show origin` requires network access to resolve the HEAD branch — offline or with no remote configured, it hangs or errors; fall back straight to the local `main`/`master`/`develop` branch check.
+- Convention detection on a repo with fewer than ~10 commits on the base branch is unreliable — a small sample can look like 100% Conventional Commits or 0% by chance. Say the sample is too small to classify confidently rather than asserting a mode.
+- Bot-authored commits are excluded by email pattern (`[bot]`, `noreply`) — a bot using a real-looking email (some CI systems do) will slip through and get flagged for style it can't fix; note this as a possible false positive rather than blocking on it.

@@ -39,6 +39,8 @@ A skill PR will be merged if it satisfies all of the following:
 - [ ] **Tested** — you have run the skill on at least one real project and it produced a useful result
 - [ ] **Original** — you wrote the SKILL.md yourself. If inspired by another source, credit it in the file header
 - [ ] **Rights confirmed** — see the sign-off section below
+- [ ] **Under 500 lines** — see Size policy below
+- [ ] **Has a Gotchas section** — real failure modes, not restated Guardrails. See below
 
 ---
 
@@ -49,7 +51,7 @@ Every skill must follow this structure:
 ```markdown
 ---
 name: <kebab-case-name>
-description: <One sentence. Include trigger phrases.>
+description: <One sentence. Include trigger phrases, or use when_to_use — see note below.>
 disable-model-invocation: true   # optional — see note below
 ---
 
@@ -69,12 +71,26 @@ disable-model-invocation: true   # optional — see note below
 <What the skill produces.>
 
 ## Guardrails  ← optional but encouraged
-<What the skill should never do.>
+<What the skill should never do, decided up front — preventive rules.>
+
+## Gotchas  ← required
+<Real failure modes this skill's actual steps can hit — a command that errors on
+an edge case, a heuristic that's wrong for some inputs, a check that silently
+does nothing if a precondition isn't met. Not a restatement of Guardrails: a
+Guardrail says "never do X"; a Gotcha says "here's how step N breaks and what
+to do about it." If you haven't hit a real failure yet, think through the
+edge cases of your own Steps section instead of leaving this generic.>
 ```
 
-**Rules for the description field:** The agent uses this to decide when to load the skill. Make it specific enough that it fires on the right trigger and not on unrelated tasks.
+**Rules for the description field:** The agent uses this to decide when to load the skill. Make it specific enough that it fires on the right trigger and not on unrelated tasks. You can either bake trigger phrases into the `description` sentence (what every skill in this kit does today) or split them into a separate `when_to_use` frontmatter field — both are valid; `description` + `when_to_use` combined are capped at 1,536 characters by Claude Code.
 
 **`disable-model-invocation: true`** — Add this flag when your skill is a pure procedure (a checklist the agent executes directly) and should never itself call out to another model or sub-agent. Most core skills set this. Omit it when your skill involves open-ended reasoning or delegation. If unsure, omit it.
+
+**Gotchas vs. Guardrails:** Guardrails are decided before anything goes wrong ("never remove the only comment explaining a non-obvious rule"). Gotchas are learned from how the skill's own steps actually fail ("`git describe --tags --abbrev=0` exits non-zero when there are no tags — the fallback path must run, not error out"). A skill can have one, the other, or both, but a skill with concrete Steps almost always has a real Gotcha if you trace through what happens when a command's assumption doesn't hold. Update this section over time as new failure modes surface in real use — it is the single highest-value section for a skill that's actually been run.
+
+### Size policy
+
+Keep `SKILL.md` under **500 lines** (same ceiling as rules — see `rules/README.md`). If a skill is approaching that, push detail into supporting files in its directory (`references/`, `scripts/`, `assets/`) and link to them from `SKILL.md` rather than inlining everything — Claude and Cursor load those files only when needed, so this keeps the always-loaded description cheap while the skill stays fully capable. No skill in this kit currently needs this; it's here so growth doesn't silently blow past the ceiling.
 
 ---
 

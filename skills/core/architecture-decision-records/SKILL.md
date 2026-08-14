@@ -107,3 +107,8 @@ Index updated: yes / no
 - Do not create an ADR for trivial choices (variable naming, minor config). Reserve for decisions that affect system structure, team workflow, or are hard to reverse.
 - If the decision has already been partially implemented, note that in the **Context** section.
 - If superseding an older ADR, update the older ADR's status to "Superseded by ADR-NNNN".
+
+## Gotchas
+- `ls docs/adr/ | sort | tail -1` sorts lexicographically, not numerically — `0010` sorts before `0002` alphabetically only if zero-padded consistently. Verify the actual highest number rather than trusting raw sort output, especially once past 9999 or if any file is unpadded.
+- Two ADRs can be drafted concurrently on different branches and collide on the same number at merge time — check the target branch's `docs/adr/` state right before writing, not just at the start of the session.
+- Marking a decision "Accepted" when it's still actively contested just moves the disagreement underground — if consensus isn't actually settled, use "Proposed" and say so.

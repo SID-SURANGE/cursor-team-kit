@@ -37,3 +37,8 @@ Read original files at changed lines for context before judging.
 - Flag issues only. Do not silently fix or revert changes.
 - Do not suggest rewrites unless the user asks for them.
 - Severity is implied by category — do not add emoji or color ratings.
+
+## Gotchas
+- A rename that Git can't detect as a rename (heavy edits alongside the move) shows as a full delete + add — don't flag it as scope creep without checking `git diff -M` first.
+- `git diff` alone misses already-staged changes and `git diff --cached` alone misses unstaged ones — use `git diff HEAD` when the user means "everything I've changed," not just one of the two.
+- On a very large diff, reading every changed file in full can blow the context budget — scope to the files the diff stat shows as most-changed first, and say what was skipped.

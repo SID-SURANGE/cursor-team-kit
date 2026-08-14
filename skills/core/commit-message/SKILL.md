@@ -98,3 +98,8 @@ A single commit message block. No explanation unless the type choice is non-obvi
 - If the staged diff is empty, say so and stop.
 - If the diff is large and spans unrelated concerns, flag it: "This diff touches X and Y — consider splitting into two commits."
 - Do not use `git commit -m` or make the commit. Write the message only.
+
+## Gotchas
+- Never fall back to unstaged changes when the staged diff is empty — that produces a message for content the user hasn't actually chosen to commit.
+- When the diff spans many unrelated top-level directories, don't force a single scope onto it — say the scope is ambiguous and let the user pick, or recommend splitting the commit.
+- `git log --oneline -10` on a very young repo (first few commits) may not have enough history to reliably infer a scope/type convention — say so rather than pattern-matching on 1–2 examples.

@@ -86,3 +86,8 @@ git commit -m $msg
 
 ## After commit
 Run `git status` to confirm success before reporting done.
+
+## Gotchas
+- Secret detection here is pattern/filename based — it will miss a secret pasted directly into application code that doesn't match `*.env`/`*key*`/`*secret*`. Read the actual diff content, not just filenames.
+- `git diff --cached --shortstat` reports nothing if nothing is staged — check `git status` first, or an empty diff silently passes every check.
+- Binary files show no line-level diff, so debug-code and secret greps produce false negatives on them — flag binaries added to the diff separately.

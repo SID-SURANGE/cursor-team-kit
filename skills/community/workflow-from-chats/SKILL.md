@@ -63,3 +63,7 @@ description: <One sentence. Include the trigger phrases.>
 
 ## Output
 A single `SKILL.md` ready to commit.
+
+## Gotchas
+- A skill drafted right after one successful run tends to encode incidental details of that specific run — a hardcoded filename, a one-off branch name, a value that happened to be correct that time — as if they were general steps. Re-read the draft looking specifically for anything that only makes sense given this session's exact context, and generalize or remove it.
+- If the source conversation only ran the workflow once, the "steps" are a hypothesis about the general case, not a verified procedure — say so, and suggest the user try the extracted skill once before relying on it.

@@ -103,3 +103,8 @@ A single Keep-a-Changelog section, ready to prepend to `CHANGELOG.md`.
   ```
 - If commits don't follow Conventional Commits, infer categories from the diff or ask the user to classify ambiguous entries.
 - Never include `[Unreleased]` sections — write the version and date directly.
+
+## Gotchas
+- `git describe --tags --abbrev=0` exits non-zero when no tags exist at all — always run the `--oneline -30` fallback rather than treating the error as "no commits since last release."
+- Never infer the version number from the diff or commit messages — take it from a version file or ask the user. A wrong guessed version silently corrupts the changelog's version history.
+- A commit categorized by its Conventional Commits prefix can still be user-invisible in substance (a `feat:` that's actually internal tooling mislabeled) — sanity-check against the diff, not just the prefix, before including it.

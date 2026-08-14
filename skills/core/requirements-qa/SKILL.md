@@ -38,3 +38,8 @@ disable-model-invocation: true
 ```
 
 Report all findings before making any edits.
+
+## Gotchas
+- If no source-of-truth file is declared anywhere (`.cursor/rules/project-context.mdc`, `AGENTS.md`), do not guess which doc is authoritative — ask. Picking the wrong one silently propagates wrong "invented" flags.
+- Scanned/image-only source PDFs may extract as empty or garbled text depending on the tool used to read them — treat a suspiciously short or nonsensical extraction as "unable to verify," not as "no source found."
+- A claim can be technically traceable to a source doc but still wrong if the source itself was superseded by a later document — check document dates, not just presence of the claim.

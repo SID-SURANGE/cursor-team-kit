@@ -81,3 +81,8 @@ Before you open your first pull request:
 2. "Is there a local dev setup doc or a `docker-compose` I should run?"
 3. "Who reviews PRs for this area of the codebase?"
 4. "What does done look like for this team — tests, docs, both?"
+
+## Gotchas
+- All of Step 1–3 assumes a git repo. Outside one, `git log`/`git branch`/`git config` fail — skip straight to reading the file layout and any README, and say the branching-model section doesn't apply.
+- A missing `origin` remote isn't always a setup mistake — some repos are intentionally local-only (scratch, template). Flag it, don't assume it's broken.
+- Don't report the onboarding as complete without actually reading `AGENTS.md`/`.cursor/rules/` content — listing that the files exist is not the same as having absorbed their conventions.
