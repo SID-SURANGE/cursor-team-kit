@@ -2,7 +2,7 @@
 
 # 🚀 Onboarding Checklist
 
-[![Version](https://img.shields.io/badge/version-1.3.0-6366f1?style=flat-square)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.8.0-6366f1?style=flat-square)](CHANGELOG.md)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20Windows-06b6d4?style=flat-square)](#1-install-the-kit-on-your-machine-5-min)
 
 **For every developer joining the team.**

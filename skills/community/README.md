@@ -14,13 +14,15 @@ Not yet in core, but tested on real projects.
 
 ## Skills
 
-| Skill | Triggered by | Auto-scanned? | External deps? |
-|-------|-------------|:--------------:|---------------|
-| `workflow-from-chats` | *"make this a skill"* / *"extract this workflow"* | ❌ explicit only | None |
-| `spec-driven-development` | *"write a spec"* / *"spec this out"* | ✅ | None |
-| `security-hardening` | *"security review"* / *"harden this"* | ✅ | None |
-| `ci-cd-pipeline` | *"set up CI"* / *"add GitHub Actions"* | ❌ explicit only | None |
-| `requirements-synthesis` | *"synthesize these requirements"* / *"read these client docs"* | ❌ explicit only | `pip install "markitdown[all]"` |
+| Skill | Triggered by | Auto-scanned? | External deps? | Default install? |
+|-------|-------------|:--------------:|---------------|:---:|
+| `workflow-from-chats` | *"make this a skill"* / *"extract this workflow"* | ❌ explicit only | None | ✅ |
+| `spec-driven-development` | *"write a spec"* / *"spec this out"* | ✅ | None | 🎓 `--profile=full` |
+| `security-hardening` | *"security review"* / *"harden this"* | ✅ | None | ✅ |
+| `ci-cd-pipeline` | *"set up CI"* / *"add GitHub Actions"* | ❌ explicit only | None | ✅ |
+| `requirements-synthesis` | *"synthesize these requirements"* / *"read these client docs"* | ❌ explicit only | `pip install "markitdown[all]"` | 🎓 `--profile=full` |
+
+🎓 = part of the requirements/consulting cluster, skipped under the default `standard` install profile — see the root [README](../../README.md#install-via-scripts-alternative).
 
 ---
 

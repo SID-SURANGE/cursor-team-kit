@@ -2,9 +2,12 @@
 # install.sh — symlinks cursor-team-ops into ~/.cursor/
 # Usage: bash install.sh [--profile=minimal|standard|full] [--rules=a,b,c] [--skills=a,b,c]
 #   minimal  — always-on rules only (agent-behavior, core-development, security-basics), no skills
-#   standard — all rules, all skills (default; matches pre-profile behavior)
-#   full     — same as standard (all rules/skills always install; profile mainly gates skills)
+#   standard — all rules, all skills EXCEPT the requirements/consulting cluster (default)
+#   full     — all rules, all skills including the requirements/consulting cluster
 #   --rules= / --skills= — explicit comma-separated allowlist, overrides the profile's list
+# The requirements/consulting cluster (requirements-qa, requirements-synthesis,
+# spec-driven-development, architecture-decision-records) serves BRD-heavy/client-facing
+# workflows, not day-to-day engineering hygiene — opt in with --profile=full or --skills=.
 # Re-run after git pull to update.
 
 set -euo pipefail
@@ -22,6 +25,7 @@ for arg in "$@"; do
 done
 
 MINIMAL_RULES="agent-behavior.mdc,core-development.mdc,security-basics.mdc"
+CONSULTING_SKILLS="requirements-qa,requirements-synthesis,spec-driven-development,architecture-decision-records"
 
 KIT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CURSOR_DIR="$HOME/.cursor"
@@ -57,7 +61,8 @@ skill_allowed() {
   fi
   case "$PROFILE" in
     minimal) return 1 ;;
-    standard|full) return 0 ;;
+    standard) [[ ",$CONSULTING_SKILLS," != *",$name,"* ]] ;;
+    full) return 0 ;;
     *) echo "Error: unknown profile '$PROFILE' (expected minimal|standard|full)" >&2; exit 1 ;;
   esac
 }
@@ -126,6 +131,9 @@ cp "$KIT_DIR/VERSION" "$CURSOR_DIR/.team-ops-version"
 echo ""
 echo "Done. Team kit v$(cat "$KIT_DIR/VERSION") installed to ~/.cursor/ (profile: $PROFILE)"
 echo "Other profiles: bash install.sh --profile=minimal | --profile=full"
+echo "  full also installs the requirements/consulting cluster (requirements-qa,"
+echo "  requirements-synthesis, spec-driven-development, architecture-decision-records)"
+echo "  — skipped by default under 'standard' since most teams don't need it daily."
 echo "Or pick exactly what you want: --rules=core-development.mdc,git-safety.mdc --skills=commit-message"
 echo "Next: in each repo, run bootstrap-project.sh and sync-project.sh so rules/skills"
 echo "      appear in Cursor Settings. Then reload Cursor."

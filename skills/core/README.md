@@ -30,6 +30,8 @@ The agent matches the `description` field against the current task context. When
 
 Skills are installed flat — both `core/` and `community/` land in `~/.cursor/skills/` and `<repo>/.cursor/skills/`.
 
+`requirements-qa` and `architecture-decision-records` are part of the requirements/consulting cluster and are **not installed by default** under the `standard` install profile — they serve BRD-heavy, client-facing workflows most day-to-day engineering teams don't need loaded. Install them with `--profile=full` (see the root [README](../../README.md#install-via-scripts-alternative)) or an explicit `--skills=` allowlist.
+
 ---
 
 ## Skill reference
@@ -84,7 +86,7 @@ Explicit-invoke only (`disable-model-invocation: true`) — say the trigger phra
 
 ---
 
-### 📋 `requirements-qa`
+### 📋 `requirements-qa` 🎓 *(full profile only)*
 
 **Triggers automatically** when you're working in `docs/`, `requirements/`, or BRD files.
 
@@ -94,7 +96,7 @@ Explicit-invoke only (`disable-model-invocation: true`) — say the trigger phra
 
 ---
 
-### 🏛️ `architecture-decision-records`
+### 🏛️ `architecture-decision-records` 🎓 *(full profile only)*
 
 **Say:** *"create an ADR"* / *"document this decision"*
 
