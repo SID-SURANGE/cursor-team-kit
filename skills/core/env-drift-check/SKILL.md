@@ -324,3 +324,8 @@ Apply fixes only with explicit confirmation per item.
 - If `.env.example` does not exist but `.env` is committed (a security risk), flag it immediately: "`.env` appears to be committed to the repository — this may contain real secrets. Check `.gitignore` and rotate any exposed values."
 - For monorepos: ask "Which package or service should I check?" and scope all checks to that subdirectory's artefacts.
 - Pairs with: `ci-cd-pipeline` (set up CI from scratch), `release-readiness` (run before shipping to catch drift at release time), `security-hardening` (if secrets exposure is detected).
+
+## Gotchas
+- The grep-based env-var extraction only catches statically-referenced keys (`process.env.FOO`, `os.environ['FOO']`). A key built dynamically (`process.env[computedName]`, `os.environ.get(f"{prefix}_KEY")`) won't surface — report the extraction as best-effort coverage, not exhaustive, so a clean report isn't read as a guarantee.
+- The Docker tag→runtime-version mapping (`node:22-alpine` → Node 22) is a small lookup table — an unfamiliar or custom base image tag should be reported as "unable to determine," never silently guessed at or skipped as if it matched.
+- `npm ci` presence in the Dockerfile doesn't guarantee the lockfile is actually copied in first — check both `COPY *lock*` and the install command together; either alone can still mean the build ignores the lockfile.

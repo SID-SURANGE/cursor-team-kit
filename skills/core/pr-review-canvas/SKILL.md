@@ -88,3 +88,8 @@ Print the reviewer map to chat. If the user asks, also write it as `PR_CANVAS.md
 
 ## Output
 Structured reviewer map with change categorization, risk flags, and suggested review order.
+
+## Gotchas
+- `gh pr diff <number>` and `gh pr view <number>` need `gh` authenticated against the right repo — if `gh auth status` fails, fall back to local `git diff` against the base branch and say the PR metadata (description, comments) is unavailable rather than silently omitting it.
+- Line-count-based risk ("Med"/"High") is a heuristic, not a real risk signal — a 5-line change to auth middleware is higher risk than a 200-line change to a test fixture. Weigh what the file does, not just its diff size.
+- Renamed/moved files can appear as large deletes+adds in the stat — check for a rename before categorizing them as a big risky change.

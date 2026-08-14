@@ -251,3 +251,8 @@ A working `.github/workflows/ci.yml` (or equivalent for your CI platform) with a
 - Never store secrets in workflow files — use the secrets manager.
 - Never set up CI for only one branch and call it done — protect `main` with branch rules too.
 - If the project already has CI, read it fully before modifying — don't add duplicate jobs.
+
+## Gotchas
+- The sample workflow above is a Node.js template — pasting it unmodified into a Python, Go, or Ruby repo passes the checkout step and then fails every job on a missing `package.json`. Always substitute the package manager, install command, and test/lint/build commands actually detected in Step 1.
+- Branch protection settings (`Settings → Branches`) aren't configurable via a committed YAML file — they require repo admin access through the GitHub UI or API. Don't imply the workflow file alone enforces them; call out the manual step explicitly.
+- A pipeline that passes locally but was never actually triggered (wrong `on:` branch filter, typo'd branch name) reports as "set up" while doing nothing — verify a real PR actually triggers the new checks before calling the setup done.

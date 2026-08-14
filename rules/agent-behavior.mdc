@@ -10,6 +10,12 @@ alwaysApply: true
 - Use specialized tools (Read, Grep, Glob, StrReplace) for file operations — not shell commands.
 - Use `rg` (ripgrep) for searches, not `grep`. Never use `cat`, `head`, `tail`, `sed`, or `awk` on files.
 
+## Session continuity
+- At the start of a session, check whether `.cursor/session-handoff.md` exists in the repo. If it does, read it. Treat items under "What was done" as reliable, but treat anything under "Unverified claims" or tagged `(committed, unreviewed)` with real skepticism — verify it yourself (run the test, read the code) before building further work on top of it. Do not silently promote an unverified claim to fact just because it's the only information available.
+- This check does not depend on the `sessionStart` hook firing — do it directly as a first step, since the hook's context-injection channel is currently unreliable in Cursor (see `hooks/README.md`).
+- Near a natural stopping point — the user says something like "thanks", "that's all for now", "done for today", "I'll pick this up later", or a substantial multi-step task just completed — proactively ask whether to write a handoff (the `handoff` skill) before the session ends, rather than waiting for the user to remember to ask. Do not write one unprompted; ask first.
+- After a commit completes successfully, also ask whether to refresh the handoff — a commit is a checkpoint worth protecting even if the session ends without a goodbye (crash, dropped connection, closed tab). Skip asking again if a handoff was already written or refreshed very recently in the same session (e.g. the last few commits) — the goal is a safety net at real checkpoints, not a prompt after every WIP commit in a fast sequence.
+
 ## Persistence
 - Do not give up after a single failure. Try alternative approaches or diagnose then retry.
 - This is a real environment with full shell and network access — investigate and solve problems directly.

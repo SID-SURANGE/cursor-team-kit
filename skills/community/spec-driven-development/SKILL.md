@@ -112,3 +112,7 @@ A markdown spec block covering all six sections above, ready to be saved as `doc
 - Never resolve ambiguous requirements by guessing — surface them as questions.
 - Never let the spec become out of date — update it before changing course, not after.
 - A spec is not a design document for its own sake. If it can't be implemented, it's not done.
+
+## Gotchas
+- The "stop and wait for approval" gate assumes a human is present to approve. In a non-interactive or autonomous run with nobody to ask, say explicitly that approval couldn't be obtained rather than treating silence as approval and proceeding.
+- A spec that goes stale mid-implementation is worse than no spec — if the diff has visibly diverged from what's written, stop and reconcile the spec before writing more code, not at the end.

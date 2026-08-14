@@ -92,3 +92,8 @@ Cleaned file(s) + a brief removal summary. No behaviour changes — only noise r
 - Never remove the only comment explaining a non-obvious algorithm or business rule.
 - Never remove imports/variables without confirming they're unused (use static analysis or grep first).
 - Never change logic — if a cleanup requires a logic decision, stop and ask.
+
+## Gotchas
+- Grep-based "unused import" detection is unreliable in dynamic languages — Python re-exports via `__all__`, JS/TS barrel files, and reflection-based lookups can all reference a symbol without a matching identifier appearing in a text search. Prefer the project's actual linter output when one exists; treat a plain grep as advisory only.
+- A parameter that looks unused may be required by an interface, protocol, or callback signature the file doesn't show — check the call site or interface definition before flagging it as dead.
+- A try/except that looks like a no-op recovery may exist specifically to suppress a known third-party library quirk — if the surrounding code or a comment hints at that, ask rather than strip it.

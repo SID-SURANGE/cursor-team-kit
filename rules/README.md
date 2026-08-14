@@ -80,3 +80,7 @@ Rules in `<repo>/.cursor/rules/` stack with team rules. They do not override the
 Team rules are maintainer-only. See [CONTRIBUTING.md](../CONTRIBUTING.md) for the process.
 
 > Every `alwaysApply: true` rule adds token cost to **every session for every user**. Rules are kept intentionally minimal — each one was retained because it measurably changes agent behaviour.
+
+## Size policy
+
+Keep every `.mdc` file under **500 lines** (aligned with Cursor's own rule-authoring guidance). If a rule is approaching that, it's covering more than one concern — split it into separate rules rather than growing one file. The longest rule in this kit today (`git-safety.mdc`) is 67 lines; there is significant headroom before this becomes a real constraint.

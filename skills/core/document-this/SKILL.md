@@ -108,3 +108,7 @@ def retry(fn, n=3, delay=1.5):
 ```
 
 Note: the loop body itself needs no comment — it is self-evident.
+
+## Gotchas
+- Inferring "why" from the function name or body alone risks encoding a guess as fact — if the rationale isn't evident from the code itself (a linked issue, a commit message, an adjacent comment), check call sites or git blame before asserting a reason, or write the constraint you can verify ("must be called after X" — observable) instead of the motivation you can't ("because the API changed" — unverified).
+- A "why" comment written before behavior is fully understood can encode a wrong belief that outlives the mistake — if the function is unclear even after reading it, say so and ask rather than guessing at intent.

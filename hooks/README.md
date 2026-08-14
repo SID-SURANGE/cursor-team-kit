@@ -119,6 +119,10 @@ Intercepts `git commit` commands and checks staged lockfile/manifest changes for
 
 Reads `~/.cursor/.team-ops-version` and injects a minimal context string with the active kit version and a pointer to Cursor Settings → Rules, Commands for the installed rule/skill list. If `.cursor/session-handoff.md` exists in the repo, its content is appended too (capped at 100 lines to avoid unbounded context growth).
 
+> ⚠️ **Known Cursor bug — this hook's output may not reach the agent.** As of Cursor 3.1.x (confirmed by Cursor staff on their forum, unresolved as of August 2026), the `additional_context` field returned by `sessionStart` hooks is dropped before it reaches the model due to a timing issue between the hook running and the agent session being created. There is no documented workaround, and no ETA for a fix. This hook still runs and exits cleanly, so it's harmless to leave installed, but do not rely on it as the only way session context gets to the agent.
+>
+> Because of this, `rules/agent-behavior.mdc` has its own **Session continuity** section that tells the agent to check for `.cursor/session-handoff.md` directly at the start of a session, independent of this hook. Rules are injected through a different, currently-reliable path, so that's the mechanism that actually works today. Keep both in place: the hook will start working again for free if/when Cursor fixes the bug, and the rule-based fallback keeps handoffs working regardless.
+
 ---
 
 ## Adding a new hook

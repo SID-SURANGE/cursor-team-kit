@@ -250,3 +250,8 @@ Do not cut the tag, push, or deploy automatically.
 - For monorepos: ask the user "Which package or service are we releasing?" and scope all checks to that subdirectory.
 - **Why dual-mode matters**: ~60% of developer teams use continuous deployment from main with no formal versioning (GitHub Octoverse, DORA 2024). A skill that assumes git tags and a CHANGELOG fails silently for the majority. CD mode runs the gates that matter for every team (no debug code, migration notes, clean tree, up-to-date branch) without demanding artefacts that most projects don't have.
 - Pairs with: `write-changelog` (Gate 2 remediation in formal mode), `commit-history-audit` (run before this skill), `pr-summary` (after READY verdict, to create the PR).
+
+## Gotchas
+- `$(git describe --tags --abbrev=0 2>/dev/null)` expands to an empty string when there are no tags — a downstream `git diff <empty>..HEAD` silently becomes `git diff ..HEAD`, which can behave unexpectedly rather than erroring loudly. Check for an empty tag value before using it in any diff command, not just at Gate 1.
+- Mode detection (formal release vs. continuous deployment) is a heuristic — a repo with an unused, ancient `VERSION` file and no recent tags will misclassify as "formal" and demand a CHANGELOG entry nobody maintains. If the signals conflict, ask instead of guessing.
+- Gate 3's debug-code grep only scans diff additions — debug code already present before the diff base (never removed) won't be caught. This gate audits what changed, not the whole codebase's cleanliness.

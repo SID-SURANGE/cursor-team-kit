@@ -2,12 +2,27 @@
 
 # 📋 Changelog
 
-[![Version](https://img.shields.io/badge/latest-1.6.0-6366f1?style=flat-square)](https://github.com/SID-SURANGE/cursor-team-ops/releases)
+[![Version](https://img.shields.io/badge/latest-1.7.0-6366f1?style=flat-square)](https://github.com/SID-SURANGE/cursor-team-ops/releases)
 
 All notable changes to cursor-team-ops are documented here.
 Versions follow [Semantic Versioning](https://semver.org/).
 
 </div>
+
+---
+
+## 1.7.0 — 2026-08-14
+
+### Added
+
+- Every `SKILL.md` (21 core + community skills) — a `## Gotchas` section documenting real failure modes in that skill's own steps (a git command that errors on an edge case, a heuristic that's wrong for some inputs), distinct from preventive Guardrails
+- `CONTRIBUTING.md` — Gotchas is now a required SKILL.md section for new skill contributions; explicit 500-line size ceiling documented for both rules and skills (was previously unstated policy)
+- `rules/agent-behavior.mdc` — "Session continuity" section: checks for `.cursor/session-handoff.md` directly at session start (independent of the `sessionStart` hook), and proactively offers to write/refresh a handoff at natural stopping points and after a successful commit
+- `skills/core/handoff/SKILL.md` — evidence tagging for handoff content: "What was done" items now require `verified` / `committed, unreviewed` tags, and a new "Unverified claims" section captures agent assertions the user never explicitly confirmed, so silence isn't mistaken for agreement in the next session
+
+### Fixed
+
+- `hooks/session-context.sh` reliance — `sessionStart` hooks' `additional_context` field is confirmed broken upstream in Cursor (acknowledged by Cursor staff, unresolved as of August 2026: hook output never reaches the agent). Session handoff now works around this via a rule-based check instead of depending solely on the hook; `hooks/README.md` documents the known bug
 
 ---
 

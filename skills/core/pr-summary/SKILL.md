@@ -56,3 +56,8 @@ Return the PR URL when done.
 - Force-push unless the user explicitly asks.
 - Merge or delete branches without being asked.
 - Summarize work you have not read — read the full diff first.
+
+## Gotchas
+- `git log [base]...HEAD` diffs against the local copy of the base branch — if it hasn't been fetched recently, the commit range can be stale or wrong. Run `git fetch origin` first when in doubt.
+- If the branch has no upstream yet, `git push -u origin HEAD` creates a new remote branch as a side effect — confirm that's intended before running it, don't just run it because the PR needs a remote ref.
+- `gh pr create` fails outright if `gh auth status` isn't authenticated — check that before drafting the PR body, not after.
