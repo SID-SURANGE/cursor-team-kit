@@ -3,7 +3,7 @@
 # Git Guardrails
 
 [![Cursor Plugin](https://img.shields.io/badge/Cursor-Plugin-black?style=flat-square)](https://github.com/SID-SURANGE/cursor-team-ops)
-[![Version](https://img.shields.io/badge/version-1.6.0-6366f1?style=flat-square)](https://github.com/SID-SURANGE/cursor-team-ops/releases)
+[![Version](https://img.shields.io/badge/version-1.8.0-6366f1?style=flat-square)](https://github.com/SID-SURANGE/cursor-team-ops/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
 
 **Hooks that intercept dangerous actions before they run — not after.**
@@ -45,11 +45,15 @@ provide.
 
 ## Install
 
-**Via Team Marketplace** (Teams/Enterprise): import
+**Via Team Marketplace** (Teams/Enterprise only): import
 `SID-SURANGE/cursor-team-ops` under **Dashboard → Plugins → Import from Repo**,
-then enable **Git Guardrails**.
+then enable **Git Guardrails**. "Import from Repo" is a Teams/Enterprise-admin
+feature in Cursor — not available on individual accounts.
 
-**Via the Marketplace browser**: search for *Git Guardrails* and install.
+**Not on Teams/Enterprise?** This plugin has not been submitted to Cursor's
+public marketplace, so it will not appear if you search the Marketplace
+browser. Use the script install instead — same hooks and rule, installed via
+`install.sh`/`install.ps1` from the [root repo](https://github.com/SID-SURANGE/cursor-team-ops#install-via-scripts-alternative).
 
 Restart Cursor after installing so the hooks register.
 

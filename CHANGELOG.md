@@ -2,12 +2,36 @@
 
 # 📋 Changelog
 
-[![Version](https://img.shields.io/badge/latest-1.7.0-6366f1?style=flat-square)](https://github.com/SID-SURANGE/cursor-team-ops/releases)
+[![Version](https://img.shields.io/badge/latest-1.8.0-6366f1?style=flat-square)](https://github.com/SID-SURANGE/cursor-team-ops/releases)
 
 All notable changes to cursor-team-ops are documented here.
 Versions follow [Semantic Versioning](https://semver.org/).
 
 </div>
+
+---
+
+## 1.8.0 — 2026-08-14
+
+Positioning and accuracy pass, prompted by a factual competitive review against the Cursor/Claude rules-and-skills ecosystem (see repo discussion). Two findings drove this release: this repo's most direct competitor is Cursor's own official first-party `cursor-team-kit` plugin (free, zero-friction install, 3 skill names in common), and this repo's one genuinely unduplicated asset — `git-guardrails`' hook-based `deny`/`ask` enforcement — wasn't being led with clearly enough.
+
+### Fixed
+
+- **`README.md`, `plugins/git-guardrails/README.md` — corrected a false installation claim.** Both said "search the Marketplace browser and install" was available to any individual user. Verified against Cursor's own plugin docs: "Import from Repo" is a Teams/Enterprise-admin-only feature, and this plugin has not been submitted to Cursor's public marketplace, so it does not appear in a Marketplace browser search for anyone. Docs now state this plainly and point individual users to the script install (`install.sh`/`install.ps1`), which is the actual working path.
+
+### Changed
+
+- **`install.sh` / `install.ps1` / `sync-project.sh` / `sync-project.ps1` — default (`standard`) profile no longer installs the requirements/consulting skill cluster** (`requirements-qa`, `requirements-synthesis`, `spec-driven-development`, `architecture-decision-records`). These serve BRD-heavy/client-facing workflows, not day-to-day engineering hygiene, and were diluting the kit's "niche, daily-useful" positioning by being bundled in by default. Opt in with `--profile=full` (`-InstallProfile full` / `-SyncProfile full` on Windows) or an explicit `--skills=`/`-Skills` allowlist. This is a default-behavior change — teams relying on `standard` installing everything should re-run with `--profile=full` to keep the prior behavior.
+- `sync-project.ps1` — brought up to parity with `sync-project.sh`: previously had no `-SyncProfile`/`-Rules`/`-Skills` support at all and always synced every rule and skill unconditionally.
+- `README.md` — corrected stale version badge (1.4.0 → 1.8.0), stale skill count (said 20, actual 21), and hooks table accuracy: `db-migration-guard.sh` and `license-gatekeeper.sh` were documented as "Blocks" but were downgraded to "Asks" back in 1.6.0 — the docs never caught up until now. Added the previously-missing `onboarding` skill to the core skills table.
+- `ONBOARDING.md`, `plugins/git-guardrails/README.md` — stale version badges corrected. `plugin.json` / `marketplace.json` version fields bumped to match.
+
+### Added
+
+- `README.md` — new "How this compares" section addressing the two real overlaps head-on: Cursor's own official `cursor-team-kit` plugin (shares 3 skill names with this repo: `pr-review-canvas`, `deslop`, `workflow-from-chats`) and Cursor Bugbot (automated PR review). States plainly what this repo does that neither does — hook-based `deny`/`ask` enforcement that runs as policy, not advice.
+- `skills/core/pr-review-canvas`, `skills/core/deslop`, `skills/community/workflow-from-chats` — each now has a "Note:" line under Purpose stating the name overlaps with Cursor's official plugin and how this repo's version differs, so a side-by-side comparison doesn't read as a copy.
+- `skills/community/workflow-from-chats` — the `SKILL.md` template it generates now includes a required `## Gotchas` section (previously missing, inconsistent with this kit's own `CONTRIBUTING.md` requirement as of 1.7.0).
+- `CONTRIBUTING.md` — the skill quality bar now asks contributors to check proposed skill names against Cursor's official `cursor-team-kit` plugin too, not just this repo's own skills.
 
 ---
 

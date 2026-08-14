@@ -9,6 +9,8 @@ disable-model-invocation: true
 ## Purpose
 Turn an unstructured diff into a structured review map: what changed, why it matters, where to look first, and what to be careful about. Helps reviewers focus attention rather than read everything.
 
+Note: Cursor's own official `cursor-team-kit` plugin ships a skill with this same name. This version outputs a plain-text/markdown reviewer map printed to chat (optionally saved as `PR_CANVAS.md`) rather than an interactive HTML walkthrough — no rendering step, works the same in any client that can display markdown.
+
 ## Trigger phrases
 - "review canvas"
 - "map this PR"

@@ -8,6 +8,8 @@ description: Strip redundant comments, dead variables/imports, and defensive try
 ## Purpose
 Remove low-value noise from code: comments that narrate what the code already says, unused variables and imports, and try/catch blocks that add no recovery logic. Makes the codebase easier to read and maintain.
 
+Note: "deslop" is common terminology across the AI-coding ecosystem by 2026, and Cursor's own official `cursor-team-kit` plugin ships a skill with this same name. This version is scoped-by-default (asks which file/directory rather than sweeping the repo) and never touches logic — see Guardrails below for the exact boundary.
+
 ## Trigger phrases
 - "deslop"
 - "clean this up"

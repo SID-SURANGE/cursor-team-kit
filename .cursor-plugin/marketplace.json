@@ -7,7 +7,7 @@
   },
   "metadata": {
     "description": "Enforcement & release-hygiene plugins for Cursor agents — guardrail hooks and shipping discipline that advisory rules can't enforce.",
-    "version": "1.6.0",
+    "version": "1.8.0",
     "pluginRoot": "plugins"
   },
   "plugins": [

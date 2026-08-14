@@ -2,9 +2,12 @@
 # Usage: .\install.ps1 [-InstallProfile minimal|standard|full] [-Rules a.mdc,b.mdc] [-Skills a,b]
 # (named -InstallProfile, not -Profile, to avoid clashing with PowerShell's automatic $PROFILE variable)
 #   minimal  — always-on rules only (agent-behavior, core-development, security-basics), no skills
-#   standard — all rules, all skills (default; matches pre-profile behavior)
-#   full     — same as standard
+#   standard — all rules, all skills EXCEPT the requirements/consulting cluster (default)
+#   full     — all rules, all skills including the requirements/consulting cluster
 #   -Rules / -Skills — explicit allowlist, overrides the profile's list
+# The requirements/consulting cluster (requirements-qa, requirements-synthesis,
+# spec-driven-development, architecture-decision-records) serves BRD-heavy/client-facing
+# workflows, not day-to-day engineering hygiene — opt in with -InstallProfile full or -Skills.
 # Re-run after git pull to update.
 #
 # Symlinks are preferred (requires Developer Mode on Windows 10+ or admin rights).
@@ -28,6 +31,7 @@ $KitDir   = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $CursorDir = Join-Path $HOME ".cursor"
 
 $MinimalRules = @("agent-behavior.mdc", "core-development.mdc", "security-basics.mdc")
+$ConsultingSkills = @("requirements-qa", "requirements-synthesis", "spec-driven-development", "architecture-decision-records")
 
 function Test-RuleAllowed {
     param([string]$Name)
@@ -42,8 +46,10 @@ function Test-SkillAllowed {
     param([string]$Name)
     if ($Skills.Count -gt 0) { return $Skills -contains $Name }
     switch ($InstallProfile) {
-        "minimal" { return $false }
-        default   { return $true }
+        "minimal"  { return $false }
+        "standard" { return -not ($ConsultingSkills -contains $Name) }
+        "full"     { return $true }
+        default    { return $true }
     }
 }
 
@@ -150,6 +156,9 @@ Copy-Item (Join-Path $KitDir "VERSION") (Join-Path $CursorDir ".team-ops-version
 Write-Host ""
 Write-Host "Done. Team kit v$version installed to $HOME\.cursor\ (profile: $InstallProfile)"
 Write-Host "Other profiles: .\install.ps1 -InstallProfile minimal | full"
+Write-Host "  full also installs the requirements/consulting cluster (requirements-qa,"
+Write-Host "  requirements-synthesis, spec-driven-development, architecture-decision-records)"
+Write-Host "  - skipped by default under 'standard' since most teams don't need it daily."
 Write-Host "Or pick exactly what you want: -Rules core-development.mdc,git-safety.mdc -Skills commit-message"
 Write-Host "Next: in each repo, run bootstrap-project.sh and sync-project.ps1 so rules/skills"
 Write-Host "      appear in Cursor Settings. Then reload Cursor."

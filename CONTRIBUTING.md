@@ -35,7 +35,7 @@ A skill PR will be merged if it satisfies all of the following:
 
 - [ ] **Generic** — works for any language, framework, and project type without modification
 - [ ] **Self-contained** — relies only on common tools (git, gh, bash, standard language CLIs). No pip install, no npm global install
-- [ ] **Distinct** — trigger phrases do not overlap with an existing skill. Check `skills/core/*/SKILL.md` and `skills/community/*/SKILL.md`
+- [ ] **Distinct** — trigger phrases do not overlap with an existing skill. Check `skills/core/*/SKILL.md` and `skills/community/*/SKILL.md`. Also check the name against Cursor's own official `cursor-team-kit` plugin (`/add-plugin cursor-team-kit` in Cursor) — if it ships a skill with the same name, add a short "Note:" line under Purpose explaining how this repo's version differs (see `skills/core/deslop/SKILL.md` for the pattern), so a side-by-side comparison doesn't read as a copy
 - [ ] **Tested** — you have run the skill on at least one real project and it produced a useful result
 - [ ] **Original** — you wrote the SKILL.md yourself. If inspired by another source, credit it in the file header
 - [ ] **Rights confirmed** — see the sign-off section below

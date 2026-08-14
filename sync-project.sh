@@ -2,9 +2,12 @@
 # sync-project.sh — copy team rules and skills into a repo's .cursor/ for Settings UI visibility
 # Usage: bash /path/to/cursor-team-ops/sync-project.sh [repo-path] [--profile=minimal|standard|full] [--rules=a,b] [--skills=a,b]
 #   minimal  — always-on rules only (agent-behavior, core-development, security-basics), no skills
-#   standard — all rules, all skills (default; matches pre-profile behavior)
-#   full     — same as standard
+#   standard — all rules, all skills EXCEPT the requirements/consulting cluster (default)
+#   full     — all rules, all skills including the requirements/consulting cluster
 #   --rules= / --skills= — explicit comma-separated allowlist, overrides the profile's list
+# The requirements/consulting cluster (requirements-qa, requirements-synthesis,
+# spec-driven-development, architecture-decision-records) serves BRD-heavy/client-facing
+# workflows, not day-to-day engineering hygiene — opt in with --profile=full or --skills=.
 # Defaults to current directory. Safe to re-run (overwrites kit files only).
 
 set -euo pipefail
@@ -25,6 +28,7 @@ done
 REPO_DIR="${REPO_DIR:-$(pwd)}"
 
 MINIMAL_RULES="agent-behavior.mdc,core-development.mdc,security-basics.mdc"
+CONSULTING_SKILLS="requirements-qa,requirements-synthesis,spec-driven-development,architecture-decision-records"
 
 rule_allowed() {
   local name="$1"
@@ -47,7 +51,8 @@ skill_allowed() {
   fi
   case "$PROFILE" in
     minimal) return 1 ;;
-    standard|full) return 0 ;;
+    standard) [[ ",$CONSULTING_SKILLS," != *",$name,"* ]] ;;
+    full) return 0 ;;
     *) echo "Error: unknown profile '$PROFILE' (expected minimal|standard|full)" >&2; exit 1 ;;
   esac
 }
